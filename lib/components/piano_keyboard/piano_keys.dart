@@ -1,3 +1,4 @@
+// piano_keys.dart
 import 'package:flutter/material.dart';
 import 'package:empyrealkeys/components/piano_keyboard/white_keys.dart';
 import 'package:provider/provider.dart';
@@ -5,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../../state/midi_provider.dart';
 import '../../state/piano_state.dart';
 import 'black_keys.dart';
+import 'piano_key_listener.dart'; // Import the new widget
 
 class PianoKeys extends StatefulWidget {
   const PianoKeys({super.key});
@@ -82,63 +84,68 @@ class _PianoKeysState extends State<PianoKeys> {
         ),
         child: Padding(
           padding: const EdgeInsets.all(10.0),
-          child:
-              Consumer<MidiProvider>(builder: (context, midiProvider, child) {
+          child: Consumer<MidiProvider>(builder: (context, midiProvider, child) {
             return midiProvider.isSoundfontLoaded
-                ? IgnorePointer(
-              ignoring: !midiProvider.isSoundfontLoaded,
-                  child: Stack(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: List.generate(numberOfKeys, (index) {
-                            String keyType;
+                ? PianoKeyListener(
+              whiteKeyIndices: whiteKeyIndices,
+              blackKeyIndices: blackKeyIndices,
+              blackKeyOffsets: blackKeyOffsets,
+              whiteKeyWidth: whiteKeyWidth,
+              blackKeyWidth: blackKeyWidth,
+              numberOfKeys: numberOfKeys,
+              child: Stack(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: List.generate(numberOfKeys, (index) {
+                      String keyType;
 
-                            // Assign the key type based on the index
-                            if (index == 0) {
-                              keyType = 'leftKey';
-                            } else if (index == numberOfKeys - 1) {
-                              keyType = 'rightKey';
-                            } else {
-                              keyType = 'centralKey';
-                            }
-                            return Expanded(
-                                child: WhiteKey(
-                                    idx: whiteKeyIndices[index],
-                                    keyType: keyType));
-                          }),
-                        ),
-                        ...blackKeys
-                      ],
-                    ),
-                )
+                      // Assign the key type based on the index
+                      if (index == 0) {
+                        keyType = 'leftKey';
+                      } else if (index == numberOfKeys - 1) {
+                        keyType = 'rightKey';
+                      } else {
+                        keyType = 'centralKey';
+                      }
+                      return Expanded(
+                          child: WhiteKey(
+                              idx: whiteKeyIndices[index],
+                              keyType: keyType));
+                    }),
+                  ),
+                  ...blackKeys
+                ],
+              ),
+            )
                 : Stack(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: List.generate(numberOfKeys, (index) {
-                          String keyType;
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(numberOfKeys, (index) {
+                    String keyType;
 
-                          // Assign the key type based on the index
-                          if (index == 0) {
-                            keyType = 'leftKey';
-                          } else if (index == numberOfKeys - 1) {
-                            keyType = 'rightKey';
-                          } else {
-                            keyType = 'centralKey';
-                          }
-                          return Expanded(
-                              child: WhiteKey(
-                                  idx: whiteKeyIndices[index],
-                                  keyType: keyType));
-                        }),
-                      ),
-                      ...blackKeys,
-                      Container(
-                        color: Colors.black.withOpacity(0.7),
-                          child: const Center(child: CircularProgressIndicator())),
-                    ],
-                  );
+                    // Assign the key type based on the index
+                    if (index == 0) {
+                      keyType = 'leftKey';
+                    } else if (index == numberOfKeys - 1) {
+                      keyType = 'rightKey';
+                    } else {
+                      keyType = 'centralKey';
+                    }
+                    return Expanded(
+                        child: WhiteKey(
+                            idx: whiteKeyIndices[index],
+                            keyType: keyType));
+                  }),
+                ),
+                ...blackKeys,
+                Container(
+                    color: Colors.black.withOpacity(0.7),
+                    child: const Center(
+                        child: CircularProgressIndicator())),
+              ],
+            );
           }),
         ),
       ),

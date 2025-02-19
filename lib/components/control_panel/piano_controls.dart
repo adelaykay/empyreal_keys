@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:iconify_flutter/icons/dashicons.dart';
 import 'package:iconify_flutter/icons/mdi.dart';
 import 'package:iconify_flutter/iconify_flutter.dart';
@@ -17,6 +18,38 @@ class ControlPanel extends StatefulWidget {
 class _ControlPanelState extends State<ControlPanel> {
   @override
   Widget build(BuildContext context) {
+    Future<bool> _showExitConfirmationDialog(BuildContext context) async {
+      return await showDialog<bool>(
+        context: context,
+        barrierDismissible: false, // User must tap a button
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Confirm Exit'),
+            content: const SingleChildScrollView(
+              child: ListBody(
+                children: <Widget>[
+                  Text('Are you sure you want to exit the app?'),
+                ],
+              ),
+            ),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('No'),
+                onPressed: () {
+                  Navigator.of(context).pop(false); // Return false (don't exit)
+                },
+              ),
+              TextButton(
+                child: const Text('Yes'),
+                onPressed: () {
+                  SystemNavigator.pop(); // Return true (exit)
+                },
+              ),
+            ],
+          );
+        },
+      ) ?? false;
+    }
     return Container(
       decoration: const BoxDecoration(
           color: Color(0xFF333333),
@@ -37,7 +70,7 @@ class _ControlPanelState extends State<ControlPanel> {
                 padding: const EdgeInsets.symmetric(horizontal: 25.0),
                 child: IconButton(
                     onPressed: () {
-                      Navigator.of(context).pop();
+                      _showExitConfirmationDialog(context); // Close the app
                       print('go back');
                     },
                     icon: const Iconify(
