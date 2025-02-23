@@ -5,6 +5,7 @@ import 'package:iconify_flutter/icons/mdi.dart';
 import 'package:iconify_flutter/iconify_flutter.dart';
 import 'package:empyrealkeys/components/control_panel/display.dart';
 import 'package:empyrealkeys/components/control_panel/rotary_knob.dart';
+import 'about_dialog.dart';
 import 'keyboard_settings.dart';
 import 'octave_selector.dart';
 
@@ -42,7 +43,7 @@ class _ControlPanelState extends State<ControlPanel> {
               TextButton(
                 child: const Text('Yes'),
                 onPressed: () {
-                  SystemNavigator.pop(); // Return true (exit)
+                  Navigator.of(context).pop(true); // Return true (exit)
                 },
               ),
             ],
@@ -50,6 +51,7 @@ class _ControlPanelState extends State<ControlPanel> {
         },
       ) ?? false;
     }
+
     return Container(
       decoration: const BoxDecoration(
           color: Color(0xFF333333),
@@ -69,9 +71,11 @@ class _ControlPanelState extends State<ControlPanel> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 25.0),
                 child: IconButton(
-                    onPressed: () {
-                      _showExitConfirmationDialog(context); // Close the app
-                      print('go back');
+                    onPressed: () async {
+                      final shouldExit = await _showExitConfirmationDialog(context);
+                      if (shouldExit) {
+                        SystemNavigator.pop();
+                      }
                     },
                     icon: const Iconify(
                       Dashicons.exit,
@@ -130,7 +134,22 @@ class _ControlPanelState extends State<ControlPanel> {
           titlePadding: EdgeInsets.only(left: screenWidth / 20, top: screenHeight / 20, right: screenWidth / 20, bottom: 10),
           shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(50))),
-          title: const Text('Settings'),
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('Settings'),
+              IconButton(
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return const AboutDialogWidget();
+                      },
+                    );
+                  },
+                  icon: const Icon(Icons.info_outline, color: Color(0xFFFFdddd))),
+            ],
+          ),
           content: SizedBox(
             width: screenWidth / 3,
             child: SingleChildScrollView(

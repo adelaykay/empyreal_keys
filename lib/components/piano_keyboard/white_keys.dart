@@ -1,8 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
-import '../../state/midi_provider.dart';
-import '../../state/piano_state.dart';
 
 class WhiteKey extends StatefulWidget {
   final String keyType;

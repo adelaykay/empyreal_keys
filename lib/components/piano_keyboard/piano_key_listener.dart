@@ -31,7 +31,6 @@ class PianoKeyListener extends StatefulWidget {
 class _PianoKeyListenerState extends State<PianoKeyListener> {
   // Use a map to track the last played note for each pointer
   final Map<int, int> _lastPlayedNoteByPointer = {};
-  int? _lastPlayedNote;
 
   void _playNote(MidiProvider midiProvider, int midiNote, int volume) {
     try {
