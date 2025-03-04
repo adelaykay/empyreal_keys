@@ -76,7 +76,7 @@ class _AboutDialogWidgetState extends State<AboutDialogWidget> {
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: const Text('Close'),
+                child: Text('Close', style: TextStyle(fontSize: MediaQuery.sizeOf(context).height * 0.03)),
               ),
             ),
           ],

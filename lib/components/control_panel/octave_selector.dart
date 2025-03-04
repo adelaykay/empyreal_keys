@@ -11,39 +11,33 @@ class OctaveSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        IconButton(
-          icon: const Iconify(
-            Mdi.arrow_drop_up,
-            color: Colors.white,
-            size: 40,
-          ),
-          onPressed: () {
+        GestureDetector(
+          onTap: () {
             final currentOctave =
-                Provider.of<PianoState>(context, listen: false)
-                    .octave;
+                Provider.of<PianoState>(context, listen: false).octave;
             if (currentOctave < 6) {
               Provider.of<PianoState>(context, listen: false)
                   .setOctave(currentOctave + 1);
             }
           },
+          child: Iconify(
+            Mdi.arrow_drop_up,
+            color: Colors.white,
+            size: MediaQuery.of(context).size.width * 0.04,
+          ),
         ),
-        const Text(
-          'octave',
-          style: TextStyle(color: Colors.white, height: 0.5),
-        ),
-        IconButton(
-          icon: const Iconify(Mdi.arrow_drop_down,
-              color: Colors.white, size: 40),
-          onPressed: () {
+        GestureDetector(
+          onTap: () {
             final currentOctave =
-                Provider.of<PianoState>(context, listen: false)
-                    .octave;
+                Provider.of<PianoState>(context, listen: false).octave;
             if (currentOctave > 0) {
               Provider.of<PianoState>(context, listen: false)
                   .setOctave(currentOctave - 1);
             }
           },
+          child: Iconify(Mdi.arrow_drop_down, color: Colors.white, size: MediaQuery.of(context).size.width * 0.04,),
         ),
       ],
     );

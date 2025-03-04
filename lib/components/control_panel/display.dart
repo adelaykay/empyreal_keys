@@ -42,15 +42,25 @@ class Display extends StatelessWidget {
           color: const Color(0xFF282424),
 
         ),
-        margin: const EdgeInsets.symmetric(horizontal: 30),
+        margin: EdgeInsets.symmetric(horizontal: MediaQuery.sizeOf(context).width * 0.02),
         padding: const EdgeInsets.symmetric(horizontal: 20),
-        width: 400, // Adjust this value
+        width: MediaQuery.sizeOf(context).width / 2.5,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(pianoState.octave.toString(), style: const TextStyle(fontSize: 30, color: Colors.grey, fontFamily: 'AtomicClockRadio'),),
-            Text(pianoState.currentNote, style: const TextStyle(fontSize: 50, color: Colors.grey, fontFamily: 'AtomicClockRadio'),),
-            Text('${pianoState.volume.toInt()}', style: const TextStyle(fontSize: 30, color: Colors.grey, fontFamily: 'AtomicClockRadio'),),
+            Column(
+              children: [
+                Text(pianoState.octave.toString(), style: TextStyle(fontSize: MediaQuery.sizeOf(context).width * 0.03, color: Colors.grey, fontFamily: 'AtomicClockRadio'),),
+                Text('8va', style: TextStyle(fontSize: MediaQuery.sizeOf(context).width * 0.01, color: Colors.grey, fontFamily: 'AtomicClockRadio'),),
+              ],
+            ),
+            Text(pianoState.currentNote, style: TextStyle(fontSize: MediaQuery.sizeOf(context).width * 0.05, color: Colors.grey, fontFamily: 'AtomicClockRadio'),),
+            Column(
+              children: [
+                Text('${pianoState.volume.toInt()}', style: TextStyle(fontSize: MediaQuery.sizeOf(context).width * 0.03, color: Colors.grey, fontFamily: 'AtomicClockRadio'),),
+                Text('vol', style: TextStyle(fontSize: MediaQuery.sizeOf(context).width * 0.01, color: Colors.grey, fontFamily: 'AtomicClockRadio'),),
+              ],
+            ),
           ],
         ),
       );

@@ -33,27 +33,30 @@ class _KeyboardSettingsState extends State<KeyboardSettings> {
             const SizedBox(height: 10,),
             // Number of Keys Selector
             Row(
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                const Text('Number of Keys: '),
+                Text('Number of Keys: ', style: TextStyle(fontSize: MediaQuery.sizeOf(context).height * 0.03)),
                 Expanded(
                   child: InteractiveSlider(
+                    focusedHeight: MediaQuery.of(context).size.height * 0.04,
+                    unfocusedHeight: MediaQuery.of(context).size.height * 0.02,
                     initialProgress: pianoState.numberOfKeys.toDouble(),
                     foregroundColor: const Color(0xFF4A90E2),
                     min: 7,
                     max: 15,
                     numberOfSegments: 8,
                     segmentDividerWidth: 0,
-                    gradient: const LinearGradient(
+                    gradient: LinearGradient(
                       colors: [
-                        Color(0xFF4A90E2),
-                        Color(0xFFE76F6B)
+                        Theme.of(context).colorScheme.secondary,
+                        Theme.of(context).colorScheme.primary
                       ],
                       stops: [
                         0, 100
                       ]
                     ),
                     segmentDividerColor: Colors.transparent,
-                    endIcon: Text('${pianoState.numberOfKeys}'),
+                    endIcon: Text('${pianoState.numberOfKeys}', style: TextStyle(fontSize: MediaQuery.sizeOf(context).height * 0.03)),
                     onChanged: (double value) {
                       setState(() {
                         pianoState.setNumberOfKeys(
@@ -66,14 +69,14 @@ class _KeyboardSettingsState extends State<KeyboardSettings> {
             ),
             // Instrument Selector
             const SizedBox(height: 10),
-            const Text('Select Instrument:'),
+            Text('Select Instrument Type:', style: TextStyle(fontSize: MediaQuery.sizeOf(context).height * 0.03)),
             DropdownButton<String>(
               value: selectedInstrumentType,
               hint: Row(
                 children: [
                   const Iconify(Ph.piano_keys),
                   const SizedBox(width: 10,),
-                  Text(pianoState.selectedInstrumentType),
+                  Text(pianoState.selectedInstrumentType, style: TextStyle(fontSize: MediaQuery.sizeOf(context).height * 0.03)),
                 ],
               ),
               onChanged: (String? newValue) {
@@ -85,7 +88,7 @@ class _KeyboardSettingsState extends State<KeyboardSettings> {
                   instruments.keys.map<DropdownMenuItem<String>>((String type) {
                 return DropdownMenuItem<String>(
                   value: type,
-                  child: Text(type),
+                  child: Text(type, style: TextStyle(fontSize: MediaQuery.sizeOf(context).height * 0.03)),
                 );
               }).toList(),
             ),
@@ -102,8 +105,7 @@ class _KeyboardSettingsState extends State<KeyboardSettings> {
                 },
                 child: ListTile(
                   title: Text(
-                    selectedInstrumentName ?? 'Select instrument:',
-                    style: const TextStyle(fontSize: 16),
+                    selectedInstrumentName ?? 'Select instrument:', style: TextStyle(fontSize: MediaQuery.sizeOf(context).height * 0.03),
                   ),
                   trailing: const Icon(Icons.arrow_drop_down),
                 ),
@@ -126,7 +128,7 @@ class _KeyboardSettingsState extends State<KeyboardSettings> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(instrumentName),
+                          Text(instrumentName, style: TextStyle(fontSize: MediaQuery.sizeOf(context).height * 0.03)),
                           soundfontFile != 'Default.SF2' ? const Iconify(Ph.download) : const SizedBox(),
                         ],
                       ),
