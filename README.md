@@ -1,16 +1,47 @@
-# pianotes
+#### Empyreal Keys
 
-A simple piano app.
+Empyreal Keys is an interactive piano app designed for musicians of all levels. It helps users improve their musical skills through exercises, tuning aids, and ear training games.
 
-## Getting Started
+### Features
 
-This project is a starting point for a Flutter application.
+## Customizable Keyboard: Choose the number of keys (12–20) and switch between different instruments.
 
-A few resources to get you started if this is your first Flutter project:
+## Soundfonts Support: Uses SF2 files to provide high-quality sounds. Default soundfont is preloaded, while others can be downloaded on demand.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## Practice Mode: Guided exercises for sight-reading, ear training, and technique improvement.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Weekly Goals: Track progress with completed and missed practice days.
+
+## Intuitive UI: Sleek design with easy access to settings and practice sessions.
+
+
+### Installation
+
+1. Clone the repository:
+
+git clone https://github.com/yourusername/empyreal-keys.git
+
+
+2. Navigate to the project folder:
+
+cd empyreal-keys
+
+
+3. Install dependencies:
+
+flutter pub get
+
+
+4. Run the app:
+
+flutter run
+
+
+
+## Contributing
+
+Contributions are welcome! Feel free to submit issues or pull requests.
+
+## License
+
+This project is licensed under the MIT License.
