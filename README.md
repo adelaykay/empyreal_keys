@@ -1,21 +1,21 @@
-#### Empyreal Keys
+# Empyreal Keys
 
 Empyreal Keys is an interactive piano app designed for musicians of all levels. It helps users improve their musical skills through exercises, tuning aids, and ear training games.
 
-### Features
+## Features
 
-## Customizable Keyboard: Choose the number of keys (12–20) and switch between different instruments.
+Customizable Keyboard: Choose the number of keys (12–20) and switch between different instruments.
 
-## Soundfonts Support: Uses SF2 files to provide high-quality sounds. Default soundfont is preloaded, while others can be downloaded on demand.
+Soundfonts Support: Uses SF2 files to provide high-quality sounds. Default soundfont is preloaded, while others can be downloaded on demand.
 
-## Practice Mode: Guided exercises for sight-reading, ear training, and technique improvement.
+Practice Mode: Guided exercises for sight-reading, ear training, and technique improvement.
 
-## Weekly Goals: Track progress with completed and missed practice days.
+Weekly Goals: Track progress with completed and missed practice days.
 
-## Intuitive UI: Sleek design with easy access to settings and practice sessions.
+Intuitive UI: Sleek design with easy access to settings and practice sessions.
 
 
-### Installation
+## Installation
 
 1. Clone the repository:
 
