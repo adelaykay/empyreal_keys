@@ -53,16 +53,24 @@ class _CustomKnobState extends State<CustomKnob> {
     if (angle < minAngle) {
       angle += 2 * pi;
     }
-    angle = angle.clamp(minAngle, maxAngle);
+    // angle = angle.clamp(minAngle, maxAngle);
 
     // Convert angle to a normalized value between minValue and maxValue
     final normalizedValue = (angle - minAngle) / (maxAngle - minAngle);
     final newValue = widget.minValue + normalizedValue * (widget.maxValue - widget.minValue);
 
-    setState(() {
-      _value = newValue.clamp(widget.minValue, widget.maxValue);
-      _angle = _valueToAngle(_value);
-    });
+    // prevent abrupt jumps between 0 and 100
+    if((newValue - widget.maxValue) > 15.0 && newValue > widget.maxValue) {
+      setState(() {
+        _value = widget.minValue;
+        _angle = _valueToAngle(_value);
+      });
+    } else {
+      setState(() {
+        _value = newValue.clamp(widget.minValue, widget.maxValue);
+        _angle = _valueToAngle(_value);
+      });
+    }
 
     widget.onChanged(_value);
   }

@@ -113,7 +113,7 @@ class _ControlPanelState extends State<ControlPanel> {
                   CustomKnob(
                     markerColor: Theme.of(context).primaryColor,
                       size: screenWidth * 0.07,
-                      value: 50,
+                      value: 75,
                       onChanged: (newVolume) {
                         Provider.of<PianoState>(context, listen: false)
                             .setVolume(newVolume.toInt());
@@ -167,14 +167,14 @@ class _ControlPanelState extends State<ControlPanel> {
             top: screenHeight / 20,
             right: screenWidth / 20,
           ),
-          shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(50))),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(screenWidth * 0.04))),
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text('Settings',
                   style: TextStyle(
-                      fontSize: MediaQuery.sizeOf(context).height * 0.05)),
+                      fontSize: screenHeight * 0.05)),
               IconButton(
                   onPressed: () {
                     showDialog(

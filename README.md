@@ -8,6 +8,8 @@ Customizable Keyboard: Choose the number of keys (12–20) and switch between di
 
 Soundfonts Support: Uses SF2 files to provide high-quality sounds. Default soundfont is preloaded, while others can be downloaded on demand.
 
+## Proposed Features
+
 Practice Mode: Guided exercises for sight-reading, ear training, and technique improvement.
 
 Weekly Goals: Track progress with completed and missed practice days.
