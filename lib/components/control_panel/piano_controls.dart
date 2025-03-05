@@ -1,3 +1,4 @@
+import 'package:empyrealkeys/components/control_panel/knob_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:iconify_flutter/icons/dashicons.dart';
@@ -5,7 +6,6 @@ import 'package:iconify_flutter/icons/mdi.dart';
 import 'package:iconify_flutter/iconify_flutter.dart';
 import 'package:empyrealkeys/components/control_panel/display.dart';
 import 'package:provider/provider.dart';
-import '../../flutter_oknob/flutter_oldschool_knob.dart';
 import '../../state/piano_state.dart';
 import 'about_dialog.dart';
 import 'keyboard_settings.dart';
@@ -74,7 +74,9 @@ class _ControlPanelState extends State<ControlPanel> {
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SizedBox(height: 10,),
+              SizedBox(
+                height: 10,
+              ),
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 25.0),
@@ -93,7 +95,9 @@ class _ControlPanelState extends State<ControlPanel> {
                       )),
                 ),
               ),
-              SizedBox(height: 10,)
+              SizedBox(
+                height: 10,
+              )
             ],
           ),
           Column(
@@ -106,14 +110,14 @@ class _ControlPanelState extends State<ControlPanel> {
                   // Display
                   Display(),
                   // Volume Control
-                  FlutterOKnob(
-                      markerColor: Theme.of(context).primaryColor,
+                  CustomKnob(
+                    markerColor: Theme.of(context).primaryColor,
                       size: screenWidth * 0.07,
-                      value: 0.5,
+                      value: 50,
                       onChanged: (newVolume) {
                         Provider.of<PianoState>(context, listen: false)
                             .setVolume(newVolume.toInt());
-                      }),
+                      })
                 ],
               ),
             ],
@@ -121,7 +125,9 @@ class _ControlPanelState extends State<ControlPanel> {
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SizedBox(height: 10,),
+              SizedBox(
+                height: 10,
+              ),
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 25.0),
@@ -136,7 +142,9 @@ class _ControlPanelState extends State<ControlPanel> {
                       )),
                 ),
               ),
-              SizedBox(height: 10,),
+              SizedBox(
+                height: 10,
+              ),
             ],
           ),
         ],
@@ -155,15 +163,18 @@ class _ControlPanelState extends State<ControlPanel> {
           actionsPadding: EdgeInsets.symmetric(
               horizontal: screenWidth / 20, vertical: screenHeight / 20),
           titlePadding: EdgeInsets.only(
-              left: screenWidth / 20,
-              top: screenHeight / 20,
-              right: screenWidth / 20,),
+            left: screenWidth / 20,
+            top: screenHeight / 20,
+            right: screenWidth / 20,
+          ),
           shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(50))),
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Settings', style: TextStyle(fontSize: MediaQuery.sizeOf(context).height * 0.05)),
+              Text('Settings',
+                  style: TextStyle(
+                      fontSize: MediaQuery.sizeOf(context).height * 0.05)),
               IconButton(
                   onPressed: () {
                     showDialog(
@@ -173,8 +184,11 @@ class _ControlPanelState extends State<ControlPanel> {
                       },
                     );
                   },
-                  icon:
-                  Icon(Icons.info_outline, color: Theme.of(context).primaryColor, size: 30,)),
+                  icon: Icon(
+                    Icons.info_outline,
+                    color: Theme.of(context).primaryColor,
+                    size: 30,
+                  )),
             ],
           ),
           content: SizedBox(
@@ -187,12 +201,14 @@ class _ControlPanelState extends State<ControlPanel> {
               style: TextButton.styleFrom(
                   foregroundColor: Theme.of(context).secondaryHeaderColor,
                   backgroundColor: Theme.of(context).primaryColor,
-                  padding:
-                      EdgeInsets.symmetric(horizontal: screenWidth * 0.05, vertical: screenHeight * 0.02)),
+                  padding: EdgeInsets.symmetric(
+                      horizontal: screenWidth * 0.05,
+                      vertical: screenHeight * 0.02)),
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Close', style: TextStyle(fontSize: screenWidth * 0.018)),
+              child: Text('Close',
+                  style: TextStyle(fontSize: screenWidth * 0.018, color: Theme.of(context).colorScheme.onPrimary),),
             ),
           ],
         );

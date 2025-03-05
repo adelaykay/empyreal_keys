@@ -35,6 +35,10 @@ class AppTheme {
     colorScheme: const ColorScheme.light(
       primary: primaryColor,
       secondary: secondaryColor,
+      surface: Colors.white,
+      onSurface: Colors.black,
+      onPrimary: Colors.white,
+      onSecondary: Colors.white,
     ),
     textTheme: const TextTheme(
       headlineLarge: headingStyle,
@@ -59,6 +63,10 @@ class AppTheme {
     colorScheme: const ColorScheme.dark(
       primary: primaryColor,
       secondary: secondaryColor,
+      surface: Colors.black,
+      onSurface: Colors.white,
+      onPrimary: Colors.white,
+      onSecondary: Colors.white,
     ),
     textTheme: const TextTheme(
       headlineLarge: headingStyle,

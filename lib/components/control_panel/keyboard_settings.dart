@@ -56,7 +56,7 @@ class _KeyboardSettingsState extends State<KeyboardSettings> {
                       ]
                     ),
                     segmentDividerColor: Colors.transparent,
-                    endIcon: Text('${pianoState.numberOfKeys}', style: TextStyle(fontSize: MediaQuery.sizeOf(context).height * 0.03)),
+                    endIcon: Text('${pianoState.numberOfKeys}', style: TextStyle(fontSize: MediaQuery.sizeOf(context).height * 0.03, color: Theme.of(context).colorScheme.onSurface)),
                     onChanged: (double value) {
                       setState(() {
                         pianoState.setNumberOfKeys(
@@ -74,7 +74,7 @@ class _KeyboardSettingsState extends State<KeyboardSettings> {
               value: selectedInstrumentType,
               hint: Row(
                 children: [
-                  const Iconify(Ph.piano_keys),
+                  Iconify(Ph.piano_keys, color: Theme.of(context).colorScheme.primary,),
                   const SizedBox(width: 10,),
                   Text(pianoState.selectedInstrumentType, style: TextStyle(fontSize: MediaQuery.sizeOf(context).height * 0.03)),
                 ],
