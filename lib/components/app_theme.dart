@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 class AppTheme {
   // Define the primary colors
-  static const Color primaryColor = Color(0xFF4A90E2);
-  static const Color secondaryColor = Color(0xFFE76F6B);
+  static const Color primaryColor = Color(0xFF00ADB5);
+  static const Color secondaryColor = Color(0xFFFF5733);
   static const Color scaffoldBackgroundColor = Color(0xFFECF4FC);
   static const Color accentColor = Color(0xFFFFC107);
 
@@ -35,6 +35,10 @@ class AppTheme {
     colorScheme: const ColorScheme.light(
       primary: primaryColor,
       secondary: secondaryColor,
+      surface: Colors.white,
+      onSurface: Colors.black,
+      onPrimary: Colors.white,
+      onSecondary: Colors.white,
     ),
     textTheme: const TextTheme(
       headlineLarge: headingStyle,
@@ -59,6 +63,10 @@ class AppTheme {
     colorScheme: const ColorScheme.dark(
       primary: primaryColor,
       secondary: secondaryColor,
+      surface: Colors.black,
+      onSurface: Colors.white,
+      onPrimary: Colors.white,
+      onSecondary: Colors.white,
     ),
     textTheme: const TextTheme(
       headlineLarge: headingStyle,

@@ -68,7 +68,7 @@ class _PianoScreenState extends State<PianoScreen> {
               Color(0xFF4A4A4A),
               Color(0xFF333333),
             ])),
-        child: const Padding(
+        child: Padding(
           padding: EdgeInsets.all(20.0),
           child: Column(
             children: [
