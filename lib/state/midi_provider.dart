@@ -42,7 +42,7 @@ class MidiProvider with ChangeNotifier {
   void playNote({
     required int midiNote,
     int channel = 0,
-    int velocity = 50,
+    int velocity = 75,
   }) {
     if (isSoundfontLoaded) {
       _midiPro.playNote(

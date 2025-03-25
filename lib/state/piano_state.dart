@@ -67,7 +67,7 @@ class PianoState with ChangeNotifier {
     "C'"
   ];
   String _currentNote = '..';
-  int _volume = 50;
+  int _volume = 75;
   int _octave = 4;
   int _numberOfKeys = 15;
   String _selectedInstrument = 'Default.SF2';
