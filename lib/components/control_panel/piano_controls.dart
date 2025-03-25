@@ -29,10 +29,13 @@ class _ControlPanelState extends State<ControlPanel> {
             barrierDismissible: false, // User must tap a button
             builder: (BuildContext context) {
               return AlertDialog(
+                backgroundColor: Color(0xFF333333),
                 title: const Text('Confirm Exit'),
+                contentPadding: EdgeInsets.only(top: 0, bottom: 20, left: 20, right: 20),
                 content: const SingleChildScrollView(
                   child: ListBody(
                     children: <Widget>[
+                      Divider(),
                       Text('Are you sure you want to exit the app?'),
                     ],
                   ),
