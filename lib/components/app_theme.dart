@@ -52,7 +52,7 @@ class AppTheme {
     ),
     bottomNavigationBarTheme: const BottomNavigationBarThemeData(
       selectedItemColor: primaryColor,  // Primary or highlight color for active items
-      unselectedItemColor: Color(0xFF9949BA5), // Muted or on-surface color for inactive items
+      unselectedItemColor: Color(0xFF949BA5), // Muted or on-surface color for inactive items
     ),
   );
 

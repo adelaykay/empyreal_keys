@@ -1,6 +1,7 @@
       import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -32,14 +33,18 @@ class SoundfontService {
     // Get the temporary directory instead of application documents directory
     final directory = await getTemporaryDirectory();
     final filePath = '${directory.path}/$filename';
-    print('Downloading to: $filePath');
+    if (kDebugMode) {
+      print('Downloading to: $filePath');
+    }
 
 
     final ref = _storage.ref().child('soundfonts/$filename');
     try {
       // Fetch download URL
       final downloadUrl = await ref.getDownloadURL();
-      print('Download URL: $downloadUrl');
+      if (kDebugMode) {
+        print('Download URL: $downloadUrl');
+      }
 
       // Use Dio for downloading the soundfont
       final dio = Dio();
@@ -47,9 +52,13 @@ class SoundfontService {
 
       // Verify the file was downloaded
       bool fileExists = await File(filePath).exists();
-      print(fileExists ? 'File downloaded successfully' : 'File download failed');
+      if (kDebugMode) {
+        print(fileExists ? 'File downloaded successfully' : 'File download failed');
+      }
     } catch (e) {
-      print('Error downloading soundfont: $e');
+      if (kDebugMode) {
+        print('Error downloading soundfont: $e');
+      }
       throw Exception('Failed to download soundfont');
     }
   }

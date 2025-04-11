@@ -1,4 +1,5 @@
 // piano_key_listener.dart
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../state/midi_provider.dart';
@@ -14,7 +15,7 @@ class PianoKeyListener extends StatefulWidget {
   final int numberOfKeys;
 
   const PianoKeyListener({
-    Key? key,
+    super.key,
     required this.child,
     required this.whiteKeyIndices,
     required this.blackKeyIndices,
@@ -22,7 +23,7 @@ class PianoKeyListener extends StatefulWidget {
     required this.whiteKeyWidth,
     required this.blackKeyWidth,
     required this.numberOfKeys,
-  }) : super(key: key);
+  });
 
   @override
   State<PianoKeyListener> createState() => _PianoKeyListenerState();
@@ -36,7 +37,9 @@ class _PianoKeyListenerState extends State<PianoKeyListener> {
     try {
       midiProvider.playNote(midiNote: midiNote, velocity: volume);
     } catch (e) {
-      print('An error occurred: $e');
+      if (kDebugMode) {
+        print('An error occurred: $e');
+      }
     }
   }
   void _stopNote(MidiProvider midiProvider, int midiNote) {

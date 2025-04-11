@@ -1,15 +1,18 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:iconify_flutter/iconify_flutter.dart';
 import 'package:iconify_flutter/icons/ph.dart';
 import 'package:interactive_slider/interactive_slider.dart';
 import 'package:provider/provider.dart';
-import '../../services/soundfont.dart';
+// import '../../services/soundfont.dart';
 import '../../state/midi_provider.dart';
 import '../../state/piano_state.dart';
 
 class KeyboardSettings extends StatefulWidget {
+  const KeyboardSettings({super.key});
+
   @override
-  _KeyboardSettingsState createState() => _KeyboardSettingsState();
+  State<KeyboardSettings> createState() => _KeyboardSettingsState();
 }
 
 class _KeyboardSettingsState extends State<KeyboardSettings> {
@@ -115,10 +118,12 @@ class _KeyboardSettingsState extends State<KeyboardSettings> {
                       .map((Map<String, String> instrument) {
                     String instrumentName = instrument.keys.first;
                     String soundfontFile = instrument.values.first;
-                    final soundfontService = SoundfontService();
+                    // final soundfontService = SoundfontService();
                     return PopupMenuItem<String>(
                       onTap: () {
-                        print('$instrumentName: $soundfontFile');
+                        if (kDebugMode) {
+                          print('$instrumentName: $soundfontFile');
+                        }
                         setState(() {
                           selectedInstrumentName = instrumentName;
                         });

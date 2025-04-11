@@ -29,9 +29,16 @@ class _ControlPanelState extends State<ControlPanel> {
             barrierDismissible: false, // User must tap a button
             builder: (BuildContext context) {
               return AlertDialog(
-                backgroundColor: Color(0xFF333333),
+                backgroundColor: Theme.of(context).colorScheme.surface,
+                titleTextStyle: TextStyle(
+                    color: Theme.of(context).primaryColor,
+                    fontSize: screenHeight * 0.04),
                 title: const Text('Confirm Exit'),
-                contentPadding: EdgeInsets.only(top: 0, bottom: 20, left: 20, right: 20),
+                contentPadding:
+                    EdgeInsets.only(top: 0, bottom: 20, left: 20, right: 20),
+                contentTextStyle: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurface,
+                    fontSize: screenHeight * 0.03),
                 content: const SingleChildScrollView(
                   child: ListBody(
                     children: <Widget>[
@@ -42,14 +49,22 @@ class _ControlPanelState extends State<ControlPanel> {
                 ),
                 actions: <Widget>[
                   TextButton(
-                    child: const Text('No'),
+                    child: Text(
+                      'No',
+                      style: TextStyle(color: Theme.of(context).primaryColor,
+                          fontSize: screenHeight * 0.035),
+                    ),
                     onPressed: () {
                       Navigator.of(context)
                           .pop(false); // Return false (don't exit)
                     },
                   ),
                   TextButton(
-                    child: const Text('Yes'),
+                    child: Text(
+                      'Yes',
+                      style: TextStyle(color: Theme.of(context).primaryColor,
+                          fontSize: screenHeight * 0.035),
+                    ),
                     onPressed: () {
                       Navigator.of(context).pop(true); // Return true (exit)
                     },
@@ -114,7 +129,7 @@ class _ControlPanelState extends State<ControlPanel> {
                   Display(),
                   // Volume Control
                   CustomKnob(
-                    markerColor: Theme.of(context).primaryColor,
+                      markerColor: Theme.of(context).primaryColor,
                       size: screenWidth * 0.07,
                       value: 75,
                       onChanged: (newVolume) {
@@ -171,13 +186,12 @@ class _ControlPanelState extends State<ControlPanel> {
             right: screenWidth / 20,
           ),
           shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(screenWidth * 0.04))),
+              borderRadius:
+                  BorderRadius.all(Radius.circular(screenWidth * 0.04))),
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Settings',
-                  style: TextStyle(
-                      fontSize: screenHeight * 0.05)),
+              Text('Settings', style: TextStyle(fontSize: screenHeight * 0.05)),
               IconButton(
                   onPressed: () {
                     showDialog(
@@ -210,8 +224,12 @@ class _ControlPanelState extends State<ControlPanel> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Close',
-                  style: TextStyle(fontSize: screenWidth * 0.018, color: Theme.of(context).colorScheme.onPrimary),),
+              child: Text(
+                'Close',
+                style: TextStyle(
+                    fontSize: screenWidth * 0.018,
+                    color: Theme.of(context).colorScheme.onPrimary),
+              ),
             ),
           ],
         );

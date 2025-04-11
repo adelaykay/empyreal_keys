@@ -1,5 +1,6 @@
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:empyrealkeys/screens/piano_screen.dart';
 import 'package:empyrealkeys/services/soundfont.dart';
@@ -12,24 +13,33 @@ import 'firebase_options.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   try {
-    print('///...Initializing...///');
+    if (kDebugMode) {
+      print('///...Initializing...///');
+    }
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
-    print('///...Initializion complete...///');
+    if (kDebugMode) {
+      print('///...Initializion complete...///');
+    }
   } catch (e) {
-    print('Failed to initialize Firebase: $e');
+    if (kDebugMode) {
+      print('Failed to initialize Firebase: $e');
+    }
   }
   try {
     // String recaptchaSiteKey = 'xxxxx';
     await FirebaseAppCheck.instance.activate(
-      // webProvider: ReCaptchaV3Provider(recaptchaSiteKey),
       androidProvider: AndroidProvider.playIntegrity,
       appleProvider: AppleProvider.debug,
     );
-    print('///...App check complete...///');
+    if (kDebugMode) {
+      print('///...App check complete...///');
+    }
   } catch (e) {
-    print("Failed to activate Firebase App Check: $e");
+    if (kDebugMode) {
+      print("Failed to activate Firebase App Check: $e");
+    }
   }
   final soundfontService = SoundfontService();
   runApp(MultiProvider(providers: [

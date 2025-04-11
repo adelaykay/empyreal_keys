@@ -26,7 +26,7 @@ class CustomKnob extends StatefulWidget {
   });
 
   @override
-  _CustomKnobState createState() => _CustomKnobState();
+  State<CustomKnob> createState() => _CustomKnobState();
 }
 
 class _CustomKnobState extends State<CustomKnob> {

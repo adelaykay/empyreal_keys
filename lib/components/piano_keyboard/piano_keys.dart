@@ -1,4 +1,5 @@
 // piano_keys.dart
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:empyrealkeys/components/piano_keyboard/white_keys.dart';
 import 'package:provider/provider.dart';
@@ -22,7 +23,9 @@ class _PianoKeysState extends State<PianoKeys> {
     setState(() {
       _displayedNote = note;
     });
-    print(_displayedNote);
+    if (kDebugMode) {
+      print(_displayedNote);
+    }
   }
 
   @override

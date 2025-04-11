@@ -17,14 +17,18 @@ class MidiProvider with ChangeNotifier {
 
   // Load the soundfont file and assign its ID to the variable _soundfontId
   void loadMidi(String font) async {
-    print('Loading soundfont: $font');
+    if (kDebugMode) {
+      print('Loading soundfont: $font');
+    }
 
     // Ensure the soundfont is downloaded or exists locally
     await soundfontService.loadSoundfont(font);
 
     // Retrieve the local path of the soundfont file
     String localPath = await soundfontService.getSoundfontPath(font);
-    print('Local path: $localPath');
+    if (kDebugMode) {
+      print('Local path: $localPath');
+    }
 
     // Load the soundfont using the local path
     _soundfontId = await _midiPro.loadSoundfont(

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 class AboutDialogWidget extends StatefulWidget {
-  const AboutDialogWidget({Key? key}) : super(key: key);
+  const AboutDialogWidget({super.key});
 
   @override
   State<AboutDialogWidget> createState() => _AboutDialogWidgetState();
@@ -34,7 +34,7 @@ class _AboutDialogWidgetState extends State<AboutDialogWidget> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
+    // final screenHeight = MediaQuery.of(context).size.height;
     return Dialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20.0),
