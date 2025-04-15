@@ -45,10 +45,14 @@ class Display extends StatelessWidget {
         margin: EdgeInsets.symmetric(horizontal: MediaQuery.sizeOf(context).width * 0.02),
         padding: const EdgeInsets.symmetric(horizontal: 20),
         width: MediaQuery.sizeOf(context).width / 2.5,
+        height: MediaQuery.sizeOf(context).width * 0.09,
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(pianoState.octave.toString(), style: TextStyle(fontSize: MediaQuery.sizeOf(context).width * 0.03, color: Colors.grey, fontFamily: 'AtomicClockRadio'),),
                 Text('8va', style: TextStyle(fontSize: MediaQuery.sizeOf(context).width * 0.01, color: Colors.grey, fontFamily: 'AtomicClockRadio'),),
@@ -56,6 +60,7 @@ class Display extends StatelessWidget {
             ),
             Text(pianoState.currentNote, style: TextStyle(fontSize: MediaQuery.sizeOf(context).width * 0.05, color: Colors.grey, fontFamily: 'AtomicClockRadio'),),
             Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text('${pianoState.volume.toInt()}', style: TextStyle(fontSize: MediaQuery.sizeOf(context).width * 0.03, color: Colors.grey, fontFamily: 'AtomicClockRadio'),),
                 Text('vol', style: TextStyle(fontSize: MediaQuery.sizeOf(context).width * 0.01, color: Colors.grey, fontFamily: 'AtomicClockRadio'),),

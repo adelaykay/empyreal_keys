@@ -51,7 +51,8 @@ class _ControlPanelState extends State<ControlPanel> {
                   TextButton(
                     child: Text(
                       'No',
-                      style: TextStyle(color: Theme.of(context).primaryColor,
+                      style: TextStyle(
+                          color: Theme.of(context).primaryColor,
                           fontSize: screenHeight * 0.035),
                     ),
                     onPressed: () {
@@ -62,7 +63,8 @@ class _ControlPanelState extends State<ControlPanel> {
                   TextButton(
                     child: Text(
                       'Yes',
-                      style: TextStyle(color: Theme.of(context).primaryColor,
+                      style: TextStyle(
+                          color: Theme.of(context).primaryColor,
                           fontSize: screenHeight * 0.035),
                     ),
                     onPressed: () {
@@ -130,7 +132,7 @@ class _ControlPanelState extends State<ControlPanel> {
                   // Volume Control
                   CustomKnob(
                       markerColor: Theme.of(context).primaryColor,
-                      size: screenWidth * 0.07,
+                      size: screenWidth * 0.08,
                       value: 75,
                       onChanged: (newVolume) {
                         Provider.of<PianoState>(context, listen: false)
