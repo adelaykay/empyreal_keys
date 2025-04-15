@@ -6,6 +6,11 @@ class PianoState with ChangeNotifier {
 
   PianoState() {
     _prefsBox = Hive.box('pianoPrefs');
+    _initialize();
+  }
+
+  void _initialize() async {
+    await _loadFromHive();
   }
 
   Future<void> _loadFromHive() async {
@@ -15,6 +20,7 @@ class PianoState with ChangeNotifier {
     _numberOfWhiteKeys = _prefsBox.get('numberOfWhiteKeys', defaultValue: 15);
     _selectedInstrument = _prefsBox.get('selectedInstrument', defaultValue: 'Default.SF2');
     _selectedInstrumentType = _prefsBox.get('selectedInstrumentType', defaultValue: 'Stein Grand');
+    _chordType = _prefsBox.get('chordType', defaultValue: 'Major');
     _showNoteNames = _prefsBox.get('showNoteNames', defaultValue: false);
     _isChordMode = _prefsBox.get('isChordMode', defaultValue: false);
     _whiteKeyIndices = _prefsBox.get('whiteKeyIndices', defaultValue: [0, 2, 4, 5, 7, 9, 11, 12, 14, 16, 17, 19, 21, 23, 24]);
@@ -59,7 +65,6 @@ class PianoState with ChangeNotifier {
       {'Heaven': 'VoiceOfHeaven.sf2'},
     ],
   };
-
   final List<String> _notes = [
     'C',
     'C#',
@@ -87,6 +92,18 @@ class PianoState with ChangeNotifier {
     'B',
     "C"
   ];
+  final Map<String, List<int>> _chordFormulas = {
+    'Major': [0, 4, 7, 12],
+    'Minor': [0, 3, 7],
+    'Diminished': [0, 3, 6],
+    'Augmented': [0, 4, 8],
+    'Major 7': [0, 4, 7, 11],
+    'Minor 7': [0, 3, 7, 10],
+    'Dominant 7': [0, 4, 7, 10],
+    'Sus2': [0, 2, 7],
+    'Sus4': [0, 5, 7],
+  };
+  String _chordType = 'Major';
   String _currentNote = '..';
   int _volume = 75;
   int _octave = 4;
@@ -113,6 +130,7 @@ class PianoState with ChangeNotifier {
     14.75
   ];
 
+  Map<String, List<int>> get chordFormulas => _chordFormulas;
   List<double> get blackKeyOffsets => _blackKeyOffsets;
   List<int> get whiteKeyIndices => _whiteKeyIndices;
   List<int> get blackKeyIndices => _blackKeyIndices;
@@ -124,11 +142,19 @@ class PianoState with ChangeNotifier {
   int get numberOfKeys => _numberOfWhiteKeys;
   String get selectedInstrument => _selectedInstrument;
   String get selectedInstrumentType => _selectedInstrumentType;
+  String get chordType => _chordType;
   bool get isChordMode => _isChordMode;
   bool get showNoteNames => _showNoteNames;
 
+  void setChordType(String type) {
+    _chordType = type;
+    _prefsBox.put('chordType', type);
+    notifyListeners();
+  }
+
   void setIsChordMode(bool enabled) {
     _isChordMode = enabled;
+    _prefsBox.put('isChordMode', enabled);
     notifyListeners();
   }
 

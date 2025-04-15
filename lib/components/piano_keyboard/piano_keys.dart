@@ -39,7 +39,6 @@ class _PianoKeysState extends State<PianoKeys> {
     final blackKeyIndices = Provider.of<PianoState>(context).blackKeyIndices;
     final blackKeyOffsets = Provider.of<PianoState>(context).blackKeyOffsets;
     final notes = Provider.of<PianoState>(context).notes;
-    final screenHeight = MediaQuery.sizeOf(context).height;
     final screenWidth = MediaQuery.sizeOf(context).width;
 
     List<Widget> blackKeys = [];
@@ -59,7 +58,6 @@ class _PianoKeysState extends State<PianoKeys> {
     }
 
     List<Widget> whiteKeyLabels = [];
-    List<Widget> blackKeyLabels = [];
     // generate white key labels widget list
     for (int i = 0; i < whiteKeyIndices.length; i++) {
       whiteKeyLabels.add(
@@ -68,7 +66,7 @@ class _PianoKeysState extends State<PianoKeys> {
             bottom: 10,
             child: Text(
               notes[whiteKeyIndices[i]],
-              style: TextStyle(color: showNoteName ? Colors.black45 : Colors.transparent, fontSize: screenHeight * 0.02, fontWeight: FontWeight.bold),
+              style: TextStyle(color: showNoteName ? Colors.black45 : Colors.transparent, fontWeight: FontWeight.bold),
             )),
       );
     }

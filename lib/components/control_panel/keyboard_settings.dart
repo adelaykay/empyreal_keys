@@ -15,12 +15,17 @@ class KeyboardSettings extends StatefulWidget {
 }
 
 class _KeyboardSettingsState extends State<KeyboardSettings> {
-  String currentKey = 'C';
   bool isExpandedPracticeAids = false;
   String?
   selectedInstrumentType; // This stores the currently selected instrument type
   String? selectedInstrumentName;
+  final ScrollController _scrollController = ScrollController();
 
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,232 +35,256 @@ class _KeyboardSettingsState extends State<KeyboardSettings> {
     final numberOfKeys = pianoState.numberOfKeys;
     var showNoteNames = pianoState.showNoteNames;
     var isChordMode = pianoState.isChordMode;
+    var chordType = pianoState.chordType;
 
 
     return Consumer<PianoState>(
       builder: (context, pianoState, child) {
         final instruments = pianoState.instruments;
-        return SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Divider
-              Container(
-                margin: EdgeInsets.symmetric(vertical: 10),
-                width: screenWidth * 0.4,
-                height: 1,
-                color: Colors.grey,
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              // Number of Keys Selector
-              Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  _buildSliderTile(
-                    'Number of Keys',
-                    numberOfKeys.toDouble(),
-                    7,
-                    15,
-                    (value) {
-                      setState(() {
-                        pianoState.setNumberOfWhiteKeys(value.toInt());
-                      });
-                    },
-                  ),
-                ],
-              ),
-              // Instrument Selector
-              const SizedBox(height: 10),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
+        return Scrollbar(
+          controller: _scrollController,
+          thumbVisibility: true,
+          thickness: 8,
+          child: SingleChildScrollView(
+            controller: _scrollController,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Divider
+                Container(
+                  margin: EdgeInsets.symmetric(vertical: 10),
+                  width: screenWidth * 0.4,
+                  height: 1,
+                  color: Colors.grey,
                 ),
-                child: Column(
+                const SizedBox(
+                  height: 10,
+                ),
+                // Number of Keys Selector
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Text('Select Instrument Type:',
-                        style: TextStyle(
-                            )),
-                    DropdownButton<String>(
-                      value: selectedInstrumentType,
-                      hint: Row(
-                        children: [
-                          Iconify(
-                            Ph.piano_keys,
-                            color: Theme.of(context).colorScheme.primary,
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          Text(pianoState.selectedInstrumentType,
-                              style: TextStyle(
-                                  fontSize:
-                                  screenHeight * 0.03)),
-                        ],
-                      ),
-                      onChanged: (String? newValue) {
+                    _buildSliderTile(
+                      'Number of Keys',
+                      numberOfKeys.toDouble(),
+                      7,
+                      15,
+                      (value) {
                         setState(() {
-                          selectedInstrumentType = newValue;
-                          pianoState.setInstrumentType(newValue!);
+                          pianoState.setNumberOfWhiteKeys(value.toInt());
                         });
                       },
-                      items: instruments.keys
-                          .map<DropdownMenuItem<String>>((String type) {
-                        return DropdownMenuItem<String>(
-                          value: type,
-                          child: Text(type,
-                              style: TextStyle(
-                                  fontSize:
-                                  screenHeight * 0.03)),
-                        );
-                      }).toList(),
                     ),
-                    if (selectedInstrumentType != null)
-                      PopupMenuButton<String>(
-                        onSelected: (String instrumentFile) {
-                          setState(() {
-                            Provider.of<MidiProvider>(context, listen: false)
-                                .isSoundfontLoaded = false;
-                            pianoState.setInstrument(instrumentFile);
-                            Provider.of<MidiProvider>(context, listen: false)
-                                .loadMidi(instrumentFile);
-                          });
-                        },
-                        child: ListTile(
-                          title: Text(
-                            selectedInstrumentName ?? 'Select instrument:',
-                            style: TextStyle(
-                                fontSize: screenHeight * 0.03),
-                          ),
-                          trailing: const Icon(Icons.arrow_drop_down),
-                        ),
-                        itemBuilder: (BuildContext context) {
-                          // Dynamically generate menu items based on the selected instrument type
-                          return instruments[selectedInstrumentType!]!
-                              .map((Map<String, String> instrument) {
-                            String instrumentName = instrument.keys.first;
-                            String soundfontFile = instrument.values.first;
-                            // final soundfontService = SoundfontService();
-                            return PopupMenuItem<String>(
-                              onTap: () {
-                                if (kDebugMode) {
-                                  print('$instrumentName: $soundfontFile');
-                                }
-                                setState(() {
-                                  selectedInstrumentName = instrumentName;
-                                  pianoState.setInstrument(instrumentName);
-                                });
-                                pianoState.setInstrument(soundfontFile);
-                              },
-                              value: soundfontFile,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(instrumentName,
-                                      style: TextStyle(
-                                          fontSize:
-                                          screenHeight *
-                                              0.03)),
-                                  soundfontFile != 'Default.SF2'
-                                      ? const Iconify(Ph.download)
-                                      : const SizedBox(),
-                                ],
-                              ),
-                            );
-                          }).toList();
-                        },
-                      ),
                   ],
                 ),
-              ),
-              const SizedBox(height: 10),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildExpandableTile(
-                    title: 'Practice Aids',
-                    icon: Icons.music_note,
-                    isExpanded: isExpandedPracticeAids,
-                    onExpand: () {
-                      setState(() {
-                        isExpandedPracticeAids = !isExpandedPracticeAids;
-                      });
-                    },
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 30.0),
-                        child: Divider(
-                          color: Colors.grey,
-                          height: 1,
-                        ),
-                      ),
-                      _buildSwitchTile(
-                        'Show Note Labels',
-                        'Display note names on the keyboard',
-                        showNoteNames,
-                        (value) {
-                          pianoState.setShowNoteNames(value);
-                        },
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 30.0),
-                        child: Divider(
-                          color: Colors.grey,
-                          height: 1,
-                        ),
-                      ),
-                      _buildSwitchTile(
-                        'Chord Mode',
-                        'Play chords instead of single notes',
-                        isChordMode,
-                            (value) {
-                          pianoState.setIsChordMode(value);
-                        },
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 30.0),
-                        child: Divider(
-                          color: Colors.grey,
-                          height: 1,
-                        ),
-                      ),
-                      _buildDropdownTile(
-                        'Key',
-                        'Select the first note of the keyboard',
-                        currentKey,
-                        ['C', 'D', 'E', 'F', 'G', 'A', 'B'],
-                        (String? newValue) {
-                          setState(() {
-                            currentKey = newValue!;
-                          });
-                        },
+                // Instrument Selector
+                const SizedBox(height: 10),
+                Container(
+                  margin: EdgeInsets.symmetric(horizontal: 10),
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.surface,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        offset: const Offset(1, 2),
+                        blurRadius: 0.2,
+                        spreadRadius: 0.3,
                       ),
                     ],
-                    subtitle: 'Enable practice aids for learning',
-                  )
-                ],
-              ),
-              const SizedBox(height: 20),
-              Center(
-                child: ElevatedButton.icon(
-                  icon: Icon(Icons.refresh),
-                  label: Text('Reset to Defaults'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.secondary,
-                    foregroundColor: Theme.of(context).colorScheme.onSecondary,
-                    padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: Colors.grey,
+                    ),
                   ),
-                  onPressed: pianoState.resetToDefault,
+                  child: Column(
+                    children: [
+                      Text('Select Instrument Type:',
+                          style: TextStyle(
+                              )),
+                      DropdownButton<String>(
+                        value: selectedInstrumentType,
+                        hint: Row(
+                          children: [
+                            Iconify(
+                              Ph.piano_keys,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            Text(pianoState.selectedInstrumentType,
+                                style: TextStyle(
+                                    fontSize:
+                                    screenHeight * 0.03)),
+                          ],
+                        ),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            selectedInstrumentType = newValue;
+                            pianoState.setInstrumentType(newValue!);
+                          });
+                        },
+                        items: instruments.keys
+                            .map<DropdownMenuItem<String>>((String type) {
+                          return DropdownMenuItem<String>(
+                            value: type,
+                            child: Text(type,
+                                style: TextStyle(
+                                    fontSize:
+                                    screenHeight * 0.03)),
+                          );
+                        }).toList(),
+                      ),
+                      if (selectedInstrumentType != null)
+                        PopupMenuButton<String>(
+                          onSelected: (String instrumentFile) {
+                            setState(() {
+                              Provider.of<MidiProvider>(context, listen: false)
+                                  .isSoundfontLoaded = false;
+                              pianoState.setInstrument(instrumentFile);
+                              Provider.of<MidiProvider>(context, listen: false)
+                                  .loadMidi(instrumentFile);
+                            });
+                          },
+                          child: ListTile(
+                            title: Text(
+                              selectedInstrumentName ?? 'Select instrument:',
+                              style: TextStyle(
+                                  fontSize: screenHeight * 0.03),
+                            ),
+                            trailing: const Icon(Icons.arrow_drop_down),
+                          ),
+                          itemBuilder: (BuildContext context) {
+                            // Dynamically generate menu items based on the selected instrument type
+                            return instruments[selectedInstrumentType!]!
+                                .map((Map<String, String> instrument) {
+                              String instrumentName = instrument.keys.first;
+                              String soundfontFile = instrument.values.first;
+                              // final soundfontService = SoundfontService();
+                              return PopupMenuItem<String>(
+                                onTap: () {
+                                  if (kDebugMode) {
+                                    print('$instrumentName: $soundfontFile');
+                                  }
+                                  setState(() {
+                                    selectedInstrumentName = instrumentName;
+                                    pianoState.setInstrument(instrumentName);
+                                  });
+                                  pianoState.setInstrument(soundfontFile);
+                                },
+                                value: soundfontFile,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(instrumentName,
+                                        style: TextStyle(
+                                            fontSize:
+                                            screenHeight *
+                                                0.03)),
+                                    soundfontFile != 'Default.SF2'
+                                        ? const Iconify(Ph.download)
+                                        : const SizedBox(),
+                                  ],
+                                ),
+                              );
+                            }).toList();
+                          },
+                        ),
+                    ],
+                  ),
                 ),
-              ),
+                const SizedBox(height: 10),
+                Container(
+                  color: Theme.of(context).colorScheme.surface,
+                  margin: EdgeInsets.symmetric(horizontal: 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildExpandableTile(
+                        title: 'Practice Aids',
+                        icon: Icons.music_note,
+                        isExpanded: isExpandedPracticeAids,
+                        onExpand: () {
+                          setState(() {
+                            isExpandedPracticeAids = !isExpandedPracticeAids;
+                          });
+                        },
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                            child: Divider(
+                              color: Colors.grey,
+                              height: 1,
+                            ),
+                          ),
+                          _buildSwitchTile(
+                            'Show Note Labels',
+                            'Display note names on the keyboard',
+                            showNoteNames,
+                            (value) {
+                              pianoState.setShowNoteNames(value);
+                            },
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                            child: Divider(
+                              color: Colors.grey,
+                              height: 1,
+                            ),
+                          ),
+                          _buildSwitchTile(
+                            'Chord Mode',
+                            'Play chords instead of single notes',
+                            isChordMode,
+                                (value) {
+                              pianoState.setIsChordMode(value);
+                            },
+                          ),
+                          isChordMode ? Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                            child: Divider(
+                              color: Colors.grey,
+                              height: 1,
+                            ),
+                          ) : SizedBox(
+                            height: 0,
+                          ),
+                          isChordMode ?
+                          _buildDropdownTile(
+                            'Chords Type',
+                            'Select the type of chords to play',
+                            chordType,
+                            pianoState.chordFormulas.keys.toList(),
+                            (String? newValue) {
+                              pianoState.setChordType(newValue!);
+                            },
+                          ) : SizedBox(
+                            height: 0,
+                          ),
+                        ],
+                        subtitle: 'Enable practice aids for learning',
+                      )
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Center(
+                  child: ElevatedButton.icon(
+                    icon: Icon(Icons.refresh),
+                    label: Text('Reset to Defaults'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Theme.of(context).colorScheme.secondary,
+                      foregroundColor: Theme.of(context).colorScheme.onSecondary,
+                      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                    onPressed: pianoState.resetToDefault,
+                  ),
+                ),
 
-            ],
+              ],
+            ),
           ),
         );
       },
@@ -271,8 +300,9 @@ class _KeyboardSettingsState extends State<KeyboardSettings> {
     required String subtitle,
   }) {
     return Card(
+      elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      margin: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+      margin: EdgeInsets.symmetric(horizontal: 0, vertical: 10),
       child: ExpansionTile(
         collapsedShape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
@@ -295,32 +325,45 @@ class _KeyboardSettingsState extends State<KeyboardSettings> {
       double max,
       Function(double) onChanged,
       ) {
-    return ListTile(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-        side: BorderSide(color: Colors.grey),
-      ),
-      tileColor: Colors.transparent,
-      title: Text("$title: ${value.toStringAsFixed(0)}"),
-      subtitle: SliderTheme(
-        data: SliderTheme.of(context).copyWith(
-          activeTrackColor: Theme.of(context).colorScheme.primary,
-          inactiveTrackColor: Theme.of(context).colorScheme.secondary.withOpacity(0.5),
-          trackHeight: MediaQuery.of(context).size.height * 0.015,
-          thumbColor: Theme.of(context).colorScheme.primary,
-          overlayColor: Theme.of(context).colorScheme.primary.withOpacity(0.2),
-          valueIndicatorColor: Theme.of(context).colorScheme.secondary,
-          valueIndicatorTextStyle: TextStyle(
-            color: Theme.of(context).colorScheme.onSecondary,
-          ),
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        border: Border.all(
+          color: Colors.grey,
         ),
-        child: Slider(
-          value: value,
-          min: min,
-          max: max,
-          divisions: (max - min).toInt(),
-          label: value.toStringAsFixed(0),
-          onChanged: onChanged,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            offset: const Offset(1, 2),
+            blurRadius: 0.1,
+            spreadRadius: 0.1
+          ),
+        ],
+      ),
+      child: ListTile(
+        title: Text("$title: ${value.toStringAsFixed(0)}"),
+        subtitle: SliderTheme(
+          data: SliderTheme.of(context).copyWith(
+            activeTrackColor: Theme.of(context).colorScheme.primary,
+            inactiveTrackColor: Theme.of(context).colorScheme.secondary.withOpacity(0.5),
+            trackHeight: MediaQuery.of(context).size.height * 0.015,
+            thumbColor: Theme.of(context).colorScheme.primary,
+            overlayColor: Theme.of(context).colorScheme.primary.withOpacity(0.2),
+            valueIndicatorColor: Theme.of(context).colorScheme.secondary,
+            valueIndicatorTextStyle: TextStyle(
+              color: Theme.of(context).colorScheme.onSecondary,
+            ),
+          ),
+          child: Slider(
+            value: value,
+            min: min,
+            max: max,
+            divisions: (max - min).toInt(),
+            label: value.toStringAsFixed(0),
+            onChanged: onChanged,
+          ),
         ),
       ),
     );
@@ -348,14 +391,6 @@ class _KeyboardSettingsState extends State<KeyboardSettings> {
                   builder: (BuildContext context) {
                     return AlertDialog(
                       content: Text(info),
-                      actions: [
-                        TextButton(
-                          child: Text('OK'),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                        ),
-                      ],
                     );
                   },
                 );
@@ -391,14 +426,6 @@ class _KeyboardSettingsState extends State<KeyboardSettings> {
                   builder: (BuildContext context) {
                     return AlertDialog(
                       content: Text(info),
-                      actions: [
-                        TextButton(
-                          child: Text('OK'),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                        ),
-                      ],
                     );
                   },
                 );
