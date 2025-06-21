@@ -26,13 +26,13 @@ class Display extends StatelessWidget {
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.7),  // Dark shadow
+              color: Colors.black.withValues(alpha: 0.7),  // Dark shadow
               offset: const Offset(-4, -4),  // Bottom-right shadow
               blurRadius: 10,  // Soften the shadow
               spreadRadius: -4,  // Make the shadow tighter inside
             ),
             BoxShadow(
-              color: Colors.white.withOpacity(0.2),  // Highlight shadow
+              color: Colors.white.withValues(alpha: 0.2),  // Highlight shadow
               offset: const Offset(-4, -4),  // Top-left shadow for highlighting
               blurRadius: 10,
               spreadRadius: -4,  // Spread towards the inside

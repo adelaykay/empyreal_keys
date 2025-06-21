@@ -1,4 +1,6 @@
 
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../state/midi_provider.dart';
@@ -91,7 +93,11 @@ class _PianoKeyListenerState extends State<PianoKeyListener> {
         bool blackKeyPressed = false;
         int? playedNote;
         // Check for black key presses first
-        for (int i = 0; i < widget.blackKeyIndices.length; i++) {
+        final int blackCount = min(
+          widget.blackKeyIndices.length,
+          widget.blackKeyOffsets.length,
+        );
+        for (int i = 0; i < blackCount; i++) {
           final double keyLeft = widget.whiteKeyWidth * widget.blackKeyOffsets[i];
           final double keyRight = keyLeft + widget.blackKeyWidth;
           final double keyTop = 0;
@@ -111,7 +117,7 @@ class _PianoKeyListenerState extends State<PianoKeyListener> {
         }
         // Check for white key presses only if no black key was pressed
         if (!blackKeyPressed) {
-          for (int i = 0; i < widget.numberOfKeys; i++) {
+          for (int i = 0; i < widget.whiteKeyIndices.length; i++) {
             final double keyLeft = i * keyWidth;
             final double keyRight = (i + 1) * keyWidth;
             int midiNote = 12 + (octave * 12) + widget.whiteKeyIndices[i];
@@ -150,7 +156,11 @@ class _PianoKeyListenerState extends State<PianoKeyListener> {
         int? playedNote;
 
         // Check for black key presses first
-        for (int i = 0; i < widget.blackKeyIndices.length; i++) {
+        final int blackCount = min(
+          widget.blackKeyIndices.length,
+          widget.blackKeyOffsets.length,
+        );
+        for (int i = 0; i < blackCount; i++) {
           final double keyLeft = widget.whiteKeyWidth * widget.blackKeyOffsets[i];
           final double keyRight = keyLeft + widget.blackKeyWidth;
           final double keyTop = 0;
@@ -177,7 +187,7 @@ class _PianoKeyListenerState extends State<PianoKeyListener> {
         }
         // Check for white key presses only if no black key was pressed
         if (!blackKeyPressed) {
-          for (int i = 0; i < widget.numberOfKeys; i++) {
+          for (int i = 0; i < widget.whiteKeyIndices.length; i++) {
             final double keyLeft = i * keyWidth;
             final double keyRight = (i + 1) * keyWidth;
             int midiNote = 12 + (octave * 12) + widget.whiteKeyIndices[i];

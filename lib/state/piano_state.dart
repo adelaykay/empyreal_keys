@@ -1,12 +1,27 @@
+import 'dart:async';
+
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 
 class PianoState with ChangeNotifier {
+  late StreamSubscription<List<ConnectivityResult>> _connSub;
   late Box _prefsBox;
 
   PianoState() {
     _prefsBox = Hive.box('pianoPrefs');
     _initialize();
+    _connSub = Connectivity().onConnectivityChanged.listen((status) {
+      if (status.contains(ConnectivityResult.none)) {
+        resetInstrument(); // auto‑reset when you go offline
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _connSub.cancel();
+    super.dispose();
   }
 
   void _initialize() async {
@@ -243,7 +258,7 @@ class PianoState with ChangeNotifier {
         indices.add(val + (12 * i));
       }
     }
-
+    // if(whiteCount == 15) indices.add(25);
     return indices;
   }
 
@@ -260,6 +275,7 @@ class PianoState with ChangeNotifier {
         offsets.add(base + val);
       }
     }
+    // if(whiteKeyCount == 15) offsets.add(7.0 * octave + 0.75);
 
     // Add black key offsets for remaining partial octave
     List<double> partialPattern = [];
@@ -300,13 +316,25 @@ class PianoState with ChangeNotifier {
     _currentNote = '..';
     _volume = 75;
     _octave = 4;
-    _numberOfWhiteKeys = 15;
+    _numberOfWhiteKeys = 14;
     _selectedInstrument = 'Default.SF2';
     _selectedInstrumentType = 'Stein Grand';
     _showNoteNames = false;
     _isChordMode = false;
+    _chordType = 'Major';
     _whiteKeyIndices = [0, 2, 4, 5, 7, 9, 11, 12, 14, 16, 17, 19, 21, 23, 24];
     _blackKeyIndices = [1, 3, 6, 8, 10, 13, 15, 18, 20, 22, 25];
     notifyListeners();
   }
+
+  /// Reset only the instrument back to the built‑in default.
+  void resetInstrument() {
+    _selectedInstrument      = 'Default.SF2';
+    _selectedInstrumentType  = 'Stein Grand';
+    // persist
+    _prefsBox.put('selectedInstrument',     _selectedInstrument);
+    _prefsBox.put('selectedInstrumentType', _selectedInstrumentType);
+    notifyListeners();
+  }
+
 }
