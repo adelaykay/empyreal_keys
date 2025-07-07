@@ -118,7 +118,7 @@ class _AboutDialogWidgetState extends State<AboutDialogWidget> {
       child: Row(
         children: [
           Expanded(
-            flex: 3,
+            flex: 2,
             child: Text(
               label,
               style: TextStyle(fontWeight: FontWeight.w600),
