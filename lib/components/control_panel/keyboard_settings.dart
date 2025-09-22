@@ -113,8 +113,8 @@ class _KeyboardSettingsState extends State<KeyboardSettings> {
                     ),
                   ],
                 ),
-                // Instrument Selector
                 const SizedBox(height: 10),
+                // Instrument Selector
                 Container(
                   margin: EdgeInsets.symmetric(horizontal: 10),
                   padding:
@@ -324,22 +324,38 @@ class _KeyboardSettingsState extends State<KeyboardSettings> {
                                     .loadMidi(selected);
                               }
                             },
-                            child: ListTile(
-                              title: Text(
-                                selectedInstrumentName ?? 'Select instrument…',
-                                style: TextStyle(
-                                    fontSize: screenHeight * 0.03,
-                                    color: Colors.teal),
-                              ),
-                              trailing: Icon(Icons.arrow_drop_down,
-                                  color: Colors.orangeAccent),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  selectedInstrumentName ?? 'Select instrument…',
+                                  style: TextStyle(
+                                      fontSize: screenHeight * 0.03,
+                                      color: Colors.teal),
+                                ),
+                                SizedBox(width: 30),
+                                Icon(Icons.arrow_drop_down,
+                                    color: Colors.orangeAccent,
+                                    size: screenHeight * 0.04),
+                              ],
                             ),
+                            // child: ListTile(
+                            //   title: Text(
+                            //     selectedInstrumentName ?? 'Select instrument…',
+                            //     style: TextStyle(
+                            //         fontSize: screenHeight * 0.03,
+                            //         color: Colors.teal),
+                            //   ),
+                            //   trailing: Icon(Icons.arrow_drop_down,
+                            //       color: Colors.orangeAccent),
+                            // ),
                           ),
                         ),
                     ],
                   ),
                 ),
                 const SizedBox(height: 10),
+                // Practice Aids Section
                 Container(
                   color: Theme.of(context).colorScheme.surface,
                   margin: EdgeInsets.symmetric(horizontal: 10),
