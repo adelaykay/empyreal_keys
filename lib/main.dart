@@ -6,12 +6,17 @@ import 'package:empyrealkeys/screens/piano_screen.dart';
 import 'package:empyrealkeys/services/soundfont.dart';
 import 'package:empyrealkeys/state/midi_provider.dart';
 import 'package:empyrealkeys/state/piano_state.dart';
+import 'package:hive/hive.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'components/app_theme.dart';
 import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  final appDocDir = await getApplicationDocumentsDirectory();
+  Hive.init(appDocDir.path);
+  await Hive.openBox('pianoPrefs');
   try {
     if (kDebugMode) {
       print('///...Initializing...///');

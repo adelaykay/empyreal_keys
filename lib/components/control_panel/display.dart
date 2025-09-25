@@ -26,13 +26,13 @@ class Display extends StatelessWidget {
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.7),  // Dark shadow
+              color: Colors.black.withValues(alpha: 0.7),  // Dark shadow
               offset: const Offset(-4, -4),  // Bottom-right shadow
               blurRadius: 10,  // Soften the shadow
               spreadRadius: -4,  // Make the shadow tighter inside
             ),
             BoxShadow(
-              color: Colors.white.withOpacity(0.2),  // Highlight shadow
+              color: Colors.white.withValues(alpha: 0.2),  // Highlight shadow
               offset: const Offset(-4, -4),  // Top-left shadow for highlighting
               blurRadius: 10,
               spreadRadius: -4,  // Spread towards the inside
@@ -45,10 +45,14 @@ class Display extends StatelessWidget {
         margin: EdgeInsets.symmetric(horizontal: MediaQuery.sizeOf(context).width * 0.02),
         padding: const EdgeInsets.symmetric(horizontal: 20),
         width: MediaQuery.sizeOf(context).width / 2.5,
+        height: MediaQuery.sizeOf(context).width * 0.09,
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(pianoState.octave.toString(), style: TextStyle(fontSize: MediaQuery.sizeOf(context).width * 0.03, color: Colors.grey, fontFamily: 'AtomicClockRadio'),),
                 Text('8va', style: TextStyle(fontSize: MediaQuery.sizeOf(context).width * 0.01, color: Colors.grey, fontFamily: 'AtomicClockRadio'),),
@@ -56,6 +60,7 @@ class Display extends StatelessWidget {
             ),
             Text(pianoState.currentNote, style: TextStyle(fontSize: MediaQuery.sizeOf(context).width * 0.05, color: Colors.grey, fontFamily: 'AtomicClockRadio'),),
             Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text('${pianoState.volume.toInt()}', style: TextStyle(fontSize: MediaQuery.sizeOf(context).width * 0.03, color: Colors.grey, fontFamily: 'AtomicClockRadio'),),
                 Text('vol', style: TextStyle(fontSize: MediaQuery.sizeOf(context).width * 0.01, color: Colors.grey, fontFamily: 'AtomicClockRadio'),),

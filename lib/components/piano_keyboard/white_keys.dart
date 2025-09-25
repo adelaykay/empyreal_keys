@@ -3,10 +3,13 @@ import 'package:flutter/material.dart';
 class WhiteKey extends StatefulWidget {
   final String keyType;
   final int idx;
+  final bool showNoteName;
+
   const WhiteKey({
     super.key,
     required this.keyType,
     required this.idx,
+    required this.showNoteName,
   });
 
   @override

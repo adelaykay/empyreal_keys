@@ -11,7 +11,7 @@ class OctaveSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
         GestureDetector(
           onTap: () {
@@ -37,7 +37,11 @@ class OctaveSelector extends StatelessWidget {
                   .setOctave(currentOctave - 1);
             }
           },
-          child: Iconify(Mdi.arrow_drop_down, color: Colors.white, size: MediaQuery.of(context).size.width * 0.04,),
+          child: Iconify(
+            Mdi.arrow_drop_down,
+            color: Colors.white,
+            size: MediaQuery.of(context).size.width * 0.04,
+          ),
         ),
       ],
     );

@@ -23,7 +23,7 @@ class _ControlPanelState extends State<ControlPanel> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
-    Future<bool> _showExitConfirmationDialog(BuildContext context) async {
+    Future<bool> showExitConfirmationDialog(BuildContext context) async {
       return await showDialog<bool>(
             context: context,
             barrierDismissible: false, // User must tap a button
@@ -33,7 +33,19 @@ class _ControlPanelState extends State<ControlPanel> {
                 titleTextStyle: TextStyle(
                     color: Theme.of(context).primaryColor,
                     fontSize: screenHeight * 0.04),
-                title: const Text('Confirm Exit'),
+                title: Row(
+                  children: [
+                    Iconify(
+                      Mdi.emergency_exit,
+                      color: Theme.of(context).primaryColor,
+                      size: 30,
+                    ),
+                    SizedBox(
+                      width: 20,
+                    ),
+                    const Text('Leaving so soon?'),
+                  ],
+                ),
                 contentPadding:
                     EdgeInsets.only(top: 0, bottom: 20, left: 20, right: 20),
                 contentTextStyle: TextStyle(
@@ -51,7 +63,8 @@ class _ControlPanelState extends State<ControlPanel> {
                   TextButton(
                     child: Text(
                       'No',
-                      style: TextStyle(color: Theme.of(context).primaryColor,
+                      style: TextStyle(
+                          color: Theme.of(context).primaryColor,
                           fontSize: screenHeight * 0.035),
                     ),
                     onPressed: () {
@@ -62,7 +75,8 @@ class _ControlPanelState extends State<ControlPanel> {
                   TextButton(
                     child: Text(
                       'Yes',
-                      style: TextStyle(color: Theme.of(context).primaryColor,
+                      style: TextStyle(
+                          color: Theme.of(context).primaryColor,
                           fontSize: screenHeight * 0.035),
                     ),
                     onPressed: () {
@@ -101,7 +115,7 @@ class _ControlPanelState extends State<ControlPanel> {
                   child: IconButton(
                       onPressed: () async {
                         final shouldExit =
-                            await _showExitConfirmationDialog(context);
+                            await showExitConfirmationDialog(context);
                         if (shouldExit) {
                           SystemNavigator.pop();
                         }
@@ -130,8 +144,8 @@ class _ControlPanelState extends State<ControlPanel> {
                   // Volume Control
                   CustomKnob(
                       markerColor: Theme.of(context).primaryColor,
-                      size: screenWidth * 0.07,
-                      value: 75,
+                      size: screenWidth * 0.08,
+                      value: Provider.of<PianoState>(context, listen: false).volume.toDouble(),
                       onChanged: (newVolume) {
                         Provider.of<PianoState>(context, listen: false)
                             .setVolume(newVolume.toInt());
@@ -173,65 +187,69 @@ class _ControlPanelState extends State<ControlPanel> {
   void showSettingsDialog(BuildContext context, screenWidth, screenHeight) {
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (BuildContext context) {
-        return AlertDialog(
-          contentPadding: EdgeInsets.symmetric(
-            horizontal: screenWidth / 20,
-          ),
-          actionsPadding: EdgeInsets.symmetric(
-              horizontal: screenWidth / 20, vertical: screenHeight / 20),
-          titlePadding: EdgeInsets.only(
-            left: screenWidth / 20,
-            top: screenHeight / 20,
-            right: screenWidth / 20,
-          ),
-          shape: RoundedRectangleBorder(
-              borderRadius:
-                  BorderRadius.all(Radius.circular(screenWidth * 0.04))),
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text('Settings', style: TextStyle(fontSize: screenHeight * 0.05)),
-              IconButton(
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return const AboutDialogWidget();
-                      },
-                    );
-                  },
-                  icon: Icon(
-                    Icons.info_outline,
-                    color: Theme.of(context).primaryColor,
-                    size: 30,
-                  )),
-            ],
-          ),
-          content: SizedBox(
-            child: SingleChildScrollView(
-              child: KeyboardSettings(),
+        return WillPopScope(
+          onWillPop: () async => false,
+          child: AlertDialog(
+            contentPadding: EdgeInsets.symmetric(
+              horizontal: screenWidth / 20,
             ),
-          ),
-          actions: [
-            TextButton(
-              style: TextButton.styleFrom(
-                  foregroundColor: Theme.of(context).secondaryHeaderColor,
-                  backgroundColor: Theme.of(context).primaryColor,
-                  padding: EdgeInsets.symmetric(
-                      horizontal: screenWidth * 0.05,
-                      vertical: screenHeight * 0.02)),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text(
-                'Close',
-                style: TextStyle(
-                    fontSize: screenWidth * 0.018,
-                    color: Theme.of(context).colorScheme.onPrimary),
+            actionsPadding: EdgeInsets.symmetric(
+                horizontal: screenWidth / 20, vertical: screenHeight / 20),
+            titlePadding: EdgeInsets.only(
+              left: screenWidth / 20,
+              top: screenHeight / 20,
+              right: screenWidth / 20,
+            ),
+            shape: RoundedRectangleBorder(
+                borderRadius:
+                    BorderRadius.all(Radius.circular(screenWidth * 0.04))),
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('Settings', style: TextStyle(fontSize: screenHeight * 0.05)),
+                IconButton(
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return const AboutDialogWidget();
+                        },
+                      );
+                    },
+                    icon: Icon(
+                      Icons.info_outline,
+                      color: Theme.of(context).primaryColor,
+                      size: 30,
+                    )),
+              ],
+            ),
+            content: SizedBox(
+              child: SingleChildScrollView(
+                child: KeyboardSettings(),
               ),
             ),
-          ],
+            actions: [
+              TextButton(
+                style: TextButton.styleFrom(
+                    foregroundColor: Theme.of(context).secondaryHeaderColor,
+                    backgroundColor: Theme.of(context).primaryColor,
+                    padding: EdgeInsets.symmetric(
+                        horizontal: screenWidth * 0.05,
+                        vertical: screenHeight * 0.02)),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text(
+                  'Close',
+                  style: TextStyle(
+                      fontSize: screenWidth * 0.018,
+                      color: Theme.of(context).colorScheme.onPrimary),
+                ),
+              ),
+            ],
+          ),
         );
       },
     );
