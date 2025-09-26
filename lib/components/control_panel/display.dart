@@ -16,12 +16,11 @@ class Display extends StatelessWidget {
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-                Color(0xFF181818),
                 Color(0XFF282424),
                 Color(0xFF282424)
               ],
               stops: [
-                0, 0.25, 1
+                0,1
               ]
           ),
           boxShadow: [

@@ -1,4 +1,5 @@
 import 'package:empyrealkeys/components/control_panel/knob_widget.dart';
+import 'package:empyrealkeys/components/control_panel/recorder_panel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:iconify_flutter/icons/dashicons.dart';
@@ -141,7 +142,7 @@ class _ControlPanelState extends State<ControlPanel> {
                       icon: const Iconify(
                         Dashicons.exit,
                         color: Color(0xFFFFFFFF),
-                        size: 30,
+                        size: 36,
                       )),
                 ),
               ),
@@ -156,7 +157,7 @@ class _ControlPanelState extends State<ControlPanel> {
             padding: const EdgeInsets.only(left: 8.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(2, (index) {
+              children: List.generate(3, (index) {
                 return Container(
                   margin: const EdgeInsets.symmetric(vertical: 6),
                   width: 10,
@@ -218,8 +219,12 @@ class _ControlPanelState extends State<ControlPanel> {
                   ],
                 ),
 
-                // --- Page 1: Metronome Controls ---
+                // --- Page 1: Recorder Controls ---
+                RecorderPanel(screenWidth: screenWidth, screenHeight: screenHeight),
+
+                // --- Page 2: Metronome Controls ---
                 MetronomePanel(screenWidth: screenWidth, screenHeight: screenHeight),
+
               ],
             ),
           ),
@@ -240,7 +245,7 @@ class _ControlPanelState extends State<ControlPanel> {
                       icon: const Iconify(
                         Mdi.equalizer_vertical,
                         color: Color(0xFFFFFFFF),
-                        size: 30,
+                        size: 36,
                       )),
                 ),
               ),

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:empyrealkeys/models/recording.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 
@@ -49,12 +50,15 @@ class PianoState with ChangeNotifier {
     notifyListeners();
   }
 
+  // Recorder State
+  final List<Recording> _recordings = [];
+
   //Metronome State
   int _bpm = 100;
   String _timeSig = "4/4";
   String _metronomeSound = 'Click'; // or "Piano", "Woodblock"
   bool _accentFirst = false;
-  bool _isPlaying = false;
+  bool _isPlayingMetronome = false;
 
   //Piano State
   final Map<String, List<Map<String, String>>> _instruments = {
@@ -179,7 +183,9 @@ class PianoState with ChangeNotifier {
   String get timeSig => _timeSig;
   String get metronomeSound => _metronomeSound;
   bool get accentFirst => _accentFirst;
-  bool get isPlaying => _isPlaying;
+  bool get isPlayingMetronome => _isPlayingMetronome;
+  //Recorder Getters
+  List<Recording> get recordings => List.unmodifiable(_recordings);
 
 
   //Metronome Setters
@@ -208,7 +214,7 @@ class PianoState with ChangeNotifier {
   }
 
   void setPlaying(bool val) {
-    _isPlaying = val;
+    _isPlayingMetronome = val;
     notifyListeners();
   }
 
