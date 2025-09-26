@@ -11,7 +11,7 @@ class SoundfontService {
   // Check if the soundfont exists in assets
   Future<bool> isSoundfontInAssets(String filename) async {
     try {
-      await rootBundle.load('assets/soundfonts/$filename');
+      await rootBundle.load('assets/sounds/soundfonts/$filename');
       return true;
     } catch (e) {
       return false;
@@ -66,7 +66,7 @@ class SoundfontService {
   // Get the local path of the soundfont file
   Future<String> getSoundfontPath(String filename) async {
     if (await isSoundfontInAssets(filename)){
-      return 'assets/soundfonts/$filename'; // assets folder path
+      return 'assets/sounds/soundfonts/$filename'; // assets folder path
     }
 
     // if not in assets, chech temp storage

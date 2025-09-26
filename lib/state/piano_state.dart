@@ -40,9 +40,23 @@ class PianoState with ChangeNotifier {
     _isChordMode = _prefsBox.get('isChordMode', defaultValue: false);
     _whiteKeyIndices = _prefsBox.get('whiteKeyIndices', defaultValue: [0, 2, 4, 5, 7, 9, 11, 12, 14, 16, 17, 19, 21, 23, 24]);
     _blackKeyIndices = _prefsBox.get('blackKeyIndices', defaultValue: [1, 3, 6, 8, 10, 13, 15, 18, 20, 22, 25]);
+    // Metronome prefs
+    _bpm = _prefsBox.get('bpm', defaultValue: 100);
+    _metronomeSound = _prefsBox.get('metronomeSound', defaultValue: 'Click');
+    _accentFirst = _prefsBox.get('accentFirst', defaultValue: false);
+    _timeSig = _prefsBox.get('timeSig', defaultValue: '4/4');
+
     notifyListeners();
   }
 
+  //Metronome State
+  int _bpm = 100;
+  String _timeSig = "4/4";
+  String _metronomeSound = 'Click'; // or "Piano", "Woodblock"
+  bool _accentFirst = false;
+  bool _isPlaying = false;
+
+  //Piano State
   final Map<String, List<Map<String, String>>> _instruments = {
     'Piano': [
       {'Electric Grand': '198_u20_Electric_Grand.sf2'},
@@ -160,7 +174,45 @@ class PianoState with ChangeNotifier {
   String get chordType => _chordType;
   bool get isChordMode => _isChordMode;
   bool get showNoteNames => _showNoteNames;
+  //Metronome Getters
+  int get bpm => _bpm;
+  String get timeSig => _timeSig;
+  String get metronomeSound => _metronomeSound;
+  bool get accentFirst => _accentFirst;
+  bool get isPlaying => _isPlaying;
 
+
+  //Metronome Setters
+  void setBpm(int newBpm) {
+    _bpm = newBpm.clamp(30, 300); // safety clamp
+    _prefsBox.put('bpm', _bpm);
+    notifyListeners();
+  }
+
+  void setAccentFirst(bool val) {
+    _accentFirst = val;
+    _prefsBox.put('accentFirst', val);
+    notifyListeners();
+  }
+
+  void setMetronomeSound(String sound) {
+    _metronomeSound = sound;
+    _prefsBox.put('metronomeSound', sound);
+    notifyListeners();
+  }
+
+  void setTimeSignature(String sig) {
+    _timeSig = sig;
+    _prefsBox.put('timeSig', sig);
+    notifyListeners();
+  }
+
+  void setPlaying(bool val) {
+    _isPlaying = val;
+    notifyListeners();
+  }
+
+  // Piano Setters
   void setChordType(String type) {
     _chordType = type;
     _prefsBox.put('chordType', type);
@@ -324,6 +376,12 @@ class PianoState with ChangeNotifier {
     _chordType = 'Major';
     _whiteKeyIndices = [0, 2, 4, 5, 7, 9, 11, 12, 14, 16, 17, 19, 21, 23, 24];
     _blackKeyIndices = [1, 3, 6, 8, 10, 13, 15, 18, 20, 22, 25];
+    // Metronome defaults
+    _bpm = 100;
+    _metronomeSound = 'Click';
+    _accentFirst = false;
+    _timeSig = '4/4';
+
     notifyListeners();
   }
 

@@ -328,7 +328,8 @@ class _KeyboardSettingsState extends State<KeyboardSettings> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  selectedInstrumentName ?? 'Select instrument…',
+                                  selectedInstrumentName ??
+                                      'Select instrument…',
                                   style: TextStyle(
                                       fontSize: screenHeight * 0.03,
                                       color: Colors.teal),

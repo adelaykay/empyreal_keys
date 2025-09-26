@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import '../../state/piano_state.dart';
 import 'about_dialog.dart';
 import 'keyboard_settings.dart';
+import 'metronome_panel.dart';
 import 'octave_selector.dart';
 
 class ControlPanel extends StatefulWidget {
@@ -19,6 +20,22 @@ class ControlPanel extends StatefulWidget {
 }
 
 class _ControlPanelState extends State<ControlPanel> {
+  bool _knobActive = false;
+  late final PageController _pageController;
+  int _currentPage = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(initialPage: _currentPage);
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -103,6 +120,7 @@ class _ControlPanelState extends State<ControlPanel> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
+          // Exit Button
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -132,28 +150,80 @@ class _ControlPanelState extends State<ControlPanel> {
               )
             ],
           ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Row(
-                children: [
-                  // Octave Selector
-                  OctaveSelector(),
-                  // Display
-                  Display(),
-                  // Volume Control
-                  CustomKnob(
-                      markerColor: Theme.of(context).primaryColor,
-                      size: screenWidth * 0.08,
-                      value: Provider.of<PianoState>(context, listen: false).volume.toDouble(),
-                      onChanged: (newVolume) {
-                        Provider.of<PianoState>(context, listen: false)
-                            .setVolume(newVolume.toInt());
-                      })
-                ],
-              ),
-            ],
+
+          // Page indicator dots (left side)
+          Padding(
+            padding: const EdgeInsets.only(left: 8.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(2, (index) {
+                return Container(
+                  margin: const EdgeInsets.symmetric(vertical: 6),
+                  width: 10,
+                  height: 10,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: _currentPage == index
+                        ? Theme.of(context).primaryColor
+                        : Colors.grey,
+                  ),
+                );
+              }),
+            ),
           ),
+          // Octave Selector, Display, and Volume Control (swipeable)
+          Expanded(
+            child: PageView(
+              controller: _pageController,
+              physics: _knobActive ? const NeverScrollableScrollPhysics() : PageScrollPhysics(),
+              scrollDirection: Axis.vertical,
+              onPageChanged: (index) {
+                setState(() {
+                  _currentPage = index;
+                });
+              },
+              children: [
+                // --- Page 0: Piano Controls ---
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        OctaveSelector(),
+                        Display(),
+                        Listener(
+                          onPointerDown: (_) {
+                            setState(() {
+                              _knobActive = true;
+                            });
+                          },
+                          onPointerUp: (_) {
+                            setState(() {
+                              _knobActive = false;
+                            });
+                          },
+                          child: CustomKnob(
+                            markerColor: Theme.of(context).primaryColor,
+                            size: screenWidth * 0.08,
+                            value: Provider.of<PianoState>(context, listen: false).volume.toDouble(),
+                            onChanged: (newVolume) {
+                              Provider.of<PianoState>(context, listen: false)
+                                  .setVolume(newVolume.toInt());
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+
+                // --- Page 1: Metronome Controls ---
+                MetronomePanel(screenWidth: screenWidth, screenHeight: screenHeight),
+              ],
+            ),
+          ),
+          // Settings Button
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -183,6 +253,7 @@ class _ControlPanelState extends State<ControlPanel> {
       ),
     );
   }
+
 
   void showSettingsDialog(BuildContext context, screenWidth, screenHeight) {
     showDialog(
