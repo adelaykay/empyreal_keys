@@ -42,7 +42,9 @@ class RecorderService extends ChangeNotifier {
       _isInitialized = true;
       notifyListeners();
     } catch (e) {
-      print('Error initializing RecorderService: $e');
+      if (kDebugMode) {
+        print('Error initializing RecorderService: $e');
+      }
     }
   }
 

@@ -1,13 +1,12 @@
 
-import 'package:flutter/foundation.dart';
-import 'package:flutter_midi_pro/flutter_midi_pro.dart';
 
+import 'package:flutter/foundation.dart';
+import 'package:flutter_midi_16kb/flutter_midi_16kb.dart';
 import '../services/soundfont.dart';
 
 class MidiProvider with ChangeNotifier {
-  final MidiPro _midiPro = MidiPro();
-  late int _soundfontId;
   bool isSoundfontLoaded = false;
+  List<String> downloadedSoundfonts = [];
 
   final SoundfontService soundfontService;
 
@@ -30,12 +29,20 @@ class MidiProvider with ChangeNotifier {
       print('Local path: $localPath');
     }
 
+    // Print list of downloaded soundfonts
+    List<String> downloadedSoundfonts = await soundfontService.getListOfLocalSoundfonts();
+    if (kDebugMode) {
+      print('Downloaded soundfonts: $downloadedSoundfonts');
+    }
+    this.downloadedSoundfonts = downloadedSoundfonts;
+
     // Load the soundfont using the local path
-    _soundfontId = await _midiPro.loadSoundfont(
-      path: localPath, // Use the downloaded file path
-      bank: 0,
-      program: 0,
+    isSoundfontLoaded = await FlutterMidi16kb.loadSoundfont(
+      localPath, // Use the downloaded file path
     );
+    if (kDebugMode) {
+      print('Soundfont loaded: $isSoundfontLoaded');
+    }
 
     // Indicate that the soundfont has been successfully loaded
     isSoundfontLoaded = true;
@@ -49,8 +56,7 @@ class MidiProvider with ChangeNotifier {
     int velocity = 75,
   }) {
     if (isSoundfontLoaded) {
-      _midiPro.playNote(
-        sfId: _soundfontId,
+      FlutterMidi16kb.playNote(
         channel: channel,
         key: midiNote,
         velocity: velocity,
@@ -64,8 +70,7 @@ class MidiProvider with ChangeNotifier {
     int channel = 0,
   }) {
     if (isSoundfontLoaded) {
-      _midiPro.stopNote(
-        sfId: _soundfontId,
+      FlutterMidi16kb.stopNote(
         channel: channel,
         key: midiNote,
       );

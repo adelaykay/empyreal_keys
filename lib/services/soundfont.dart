@@ -1,4 +1,4 @@
-      import 'dart:io';
+import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
@@ -23,19 +23,25 @@ class SoundfontService {
     final filePath = '${directory.path}/$filename';
     return File(filePath).exists();
   }
+  // Get the list of downloaded soundfonts from App Storage
+  Future<List<String>> getListOfLocalSoundfonts() async {
+    final directory = await getApplicationDocumentsDirectory();
+    final files = await directory.list().toList();
+    return files.map((file) => file.path.split('/').last).where((name)=>name.toLowerCase().endsWith('.sf2')).toList();
+  }
 
   // Downloads the soundfont from Firebase Storage
   Future<void> downloadSoundfont(String filename) async {
-    // final directory = await getApplicationDocumentsDirectory();
-    // final filePath = '${directory.path}/$filename';
-    // print('Downloading to: $filePath');
+    final directory = await getApplicationDocumentsDirectory();
+    final filePath = '${directory.path}/$filename';
+    print('Downloading to: $filePath');
 
     // Get the temporary directory instead of application documents directory
-    final directory = await getTemporaryDirectory();
-    final filePath = '${directory.path}/$filename';
-    if (kDebugMode) {
-      print('Downloading to: $filePath');
-    }
+    // final directory = await getTemporaryDirectory();
+    // final filePath = '${directory.path}/$filename';
+    // if (kDebugMode) {
+    //   print('Downloading to: $filePath');
+    // }
 
 
     final ref = _storage.ref().child('soundfonts/$filename');
@@ -66,11 +72,20 @@ class SoundfontService {
   // Get the local path of the soundfont file
   Future<String> getSoundfontPath(String filename) async {
     if (await isSoundfontInAssets(filename)){
-      return 'assets/sounds/soundfonts/$filename'; // assets folder path
+      String localPath = 'assets/sounds/soundfonts/$filename';
+      final ByteData data = await rootBundle.load(localPath);
+      final List<int> bytes = data.buffer.asUint8List();
+
+      final Directory tempDir = await getTemporaryDirectory();
+      final String fileName = localPath.split('/').last;
+      final File tempFile = File('${tempDir.path}/$fileName');
+
+      await tempFile.writeAsBytes(bytes);
+      return tempFile.path; // assets folder path
     }
 
-    // if not in assets, chech temp storage
-    final directory = await getTemporaryDirectory();
+    // if not in assets, check temp storage
+    final directory = await getApplicationDocumentsDirectory();
     return '${directory.path}/$filename';
   }
 
