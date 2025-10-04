@@ -7,6 +7,7 @@ import 'dart:io';
 
 import '../../services/play_along_service.dart';
 import '../../services/library_service.dart';
+import 'collapsible_search_bar.dart';
 
 class PersonalBottomSheet extends StatefulWidget {
   const PersonalBottomSheet({super.key});
@@ -17,6 +18,8 @@ class PersonalBottomSheet extends StatefulWidget {
 
 class _PersonalBottomSheetState extends State<PersonalBottomSheet> {
   bool _isImporting = false;
+  bool _searchExpanded = false;
+  String _searchQuery = '';
 
   @override
   Widget build(BuildContext context) {
@@ -55,16 +58,29 @@ class _PersonalBottomSheetState extends State<PersonalBottomSheet> {
                   ),
                 ),
 
-                // Title
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 8.0),
-                  child: Text(
-                    "Personal Library",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
+                /// Title and Search
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        "Personal Library",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(
+                        width: _searchExpanded ? 250 : 48,
+                        child: CollapsibleSearchBar(
+                          hintText: 'Search files...',
+                          onExpandChanged: (exp) => setState(() => _searchExpanded = exp),
+                          onChanged: (query) => setState(() => _searchQuery = query.toLowerCase()),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
 
@@ -115,6 +131,11 @@ class _PersonalBottomSheetState extends State<PersonalBottomSheet> {
       LibraryService libraryService,
       PlayAlongService playAlongService,
       ) {
+    // Filter pieces based on search query
+    final filteredPieces = _searchQuery.isEmpty
+        ? pieces
+        : pieces.where((piece) => piece.title.toLowerCase().contains(_searchQuery)).toList();
+
     return Column(
       children: [
         // Import button
@@ -140,41 +161,43 @@ class _PersonalBottomSheetState extends State<PersonalBottomSheet> {
 
         // List of imported pieces
         Expanded(
-          child: pieces.isEmpty
+          child: filteredPieces.isEmpty
               ? Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
-                  Icons.folder_open,
+                  _searchQuery.isEmpty ? Icons.folder_open : Icons.search_off,
                   size: 64,
                   color: Colors.grey[600],
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  'No imported files yet',
+                  _searchQuery.isEmpty ? 'No imported files yet' : 'No files found',
                   style: TextStyle(
                     color: Colors.grey[400],
                     fontSize: 16,
                   ),
                 ),
-                const SizedBox(height: 8),
-                Text(
-                  'Tap the button above to import',
-                  style: TextStyle(
-                    color: Colors.grey[500],
-                    fontSize: 14,
+                if (_searchQuery.isEmpty) ...[
+                  const SizedBox(height: 8),
+                  Text(
+                    'Tap the button above to import',
+                    style: TextStyle(
+                      color: Colors.grey[500],
+                      fontSize: 14,
+                    ),
                   ),
-                ),
+                ]
               ],
             ),
           )
               : ListView.builder(
             controller: controller,
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            itemCount: pieces.length,
+            itemCount: filteredPieces.length,
             itemBuilder: (context, index) {
-              final piece = pieces[index];
+              final piece = filteredPieces[index];
               return Container(
                 margin: const EdgeInsets.only(bottom: 8),
                 decoration: BoxDecoration(
@@ -249,32 +272,39 @@ class _PersonalBottomSheetState extends State<PersonalBottomSheet> {
       List<dynamic> recordings,
       PlayAlongService playAlongService,
       ) {
-    if (recordings.isEmpty) {
+    // Filter recordings based on search query
+    final filteredRecordings = _searchQuery.isEmpty
+        ? recordings
+        : recordings.where((rec) => rec.title.toLowerCase().contains(_searchQuery)).toList();
+
+    if (filteredRecordings.isEmpty) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
-              Icons.mic_none,
+              _searchQuery.isEmpty ? Icons.mic_none : Icons.search_off,
               size: 64,
               color: Colors.grey[600],
             ),
             const SizedBox(height: 16),
             Text(
-              'No recordings yet',
+              _searchQuery.isEmpty ? 'No recordings yet' : 'No recordings found',
               style: TextStyle(
                 color: Colors.grey[400],
                 fontSize: 16,
               ),
             ),
-            const SizedBox(height: 8),
-            Text(
-              'Record something on the Recorder panel',
-              style: TextStyle(
-                color: Colors.grey[500],
-                fontSize: 14,
+            if (_searchQuery.isEmpty) ...[
+              const SizedBox(height: 8),
+              Text(
+                'Record something on the Recorder panel',
+                style: TextStyle(
+                  color: Colors.grey[500],
+                  fontSize: 14,
+                ),
               ),
-            ),
+            ]
           ],
         ),
       );
@@ -283,9 +313,9 @@ class _PersonalBottomSheetState extends State<PersonalBottomSheet> {
     return ListView.builder(
       controller: controller,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      itemCount: recordings.length,
+      itemCount: filteredRecordings.length,
       itemBuilder: (context, index) {
-        final recording = recordings[index];
+        final recording = filteredRecordings[index];
         return Container(
           margin: const EdgeInsets.only(bottom: 8),
           decoration: BoxDecoration(

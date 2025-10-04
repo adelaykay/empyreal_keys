@@ -1,4 +1,5 @@
 import 'package:empyrealkeys/components/control_panel/personal_bottom_sheet.dart';
+import 'package:empyrealkeys/components/control_panel/scrolling_score_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -77,6 +78,12 @@ class _PlayAlongPanelState extends State<PlayAlongPanel> {
                       playAlongService.resumePlayback();
                     } else {
                       playAlongService.pausePlayback();
+                      // Stop all active MIDI notes before pausing
+                      for (int note = 0; note < 128; note++) {
+                        midiProvider.stopNote(midiNote: note);
+                      }
+                      playAlongService.pausePlayback();
+                      pianoState.clearActivePlayAlongNotes();
                     }
                   }
                 },
@@ -111,9 +118,9 @@ class _PlayAlongPanelState extends State<PlayAlongPanel> {
                     trackHeight: 3,
                   ),
                   child: Slider(
-                    value: playAlongService.playbackPosition,
+                    value: playAlongService.playbackPosition.clamp(0.0, playAlongService.totalDuration.isFinite ? playAlongService.totalDuration : 1.0),
                     min: 0,
-                    max: playAlongService.totalDuration,
+                    max: playAlongService.totalDuration.isFinite ? playAlongService.totalDuration : 1.0,
                     activeColor: Theme.of(context).primaryColor,
                     inactiveColor: Colors.grey,
                     onChanged: (value) {
@@ -140,33 +147,10 @@ class _PlayAlongPanelState extends State<PlayAlongPanel> {
 
           // Scrolling score placeholder
           Expanded(
-            child: Container(
-              margin: EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.music_note,
-                      size: 48,
-                      color: Colors.white.withValues(alpha: 0.3),
-                    ),
-                    SizedBox(height: 8),
-                    Text(
-                      "Scrolling score visualization\ncoming soon",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.5),
-                        fontSize: 14,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+            child: ScrollingScoreWidget(
+              recording: playAlongService.currentPiece!,
+              currentPosition: playAlongService.playbackPosition,
+              screenHeight: widget.screenHeight,
             ),
           ),
         ],

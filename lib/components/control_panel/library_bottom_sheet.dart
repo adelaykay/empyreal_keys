@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../../services/play_along_service.dart';
 import '../../services/library_service.dart';
+import 'collapsible_search_bar.dart';
 
 class LibraryBottomSheet extends StatefulWidget {
   const LibraryBottomSheet({super.key});
@@ -15,6 +16,8 @@ class LibraryBottomSheet extends StatefulWidget {
 class _LibraryBottomSheetState extends State<LibraryBottomSheet> {
   bool _isLoading = false;
   String? _loadingPiece;
+  bool _searchExpanded = false;
+  String _searchQuery = '';
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +26,7 @@ class _LibraryBottomSheetState extends State<LibraryBottomSheet> {
 
     return DraggableScrollableSheet(
       expand: false,
-      initialChildSize: 0.75,
+      initialChildSize: 0.9,
       maxChildSize: 0.9,
       minChildSize: 0.5,
       builder: (context, scrollController) {
@@ -48,16 +51,32 @@ class _LibraryBottomSheetState extends State<LibraryBottomSheet> {
                   ),
                 ),
 
-                // Title
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 8.0),
-                  child: Text(
-                    "Music Library",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
+                // Title and Search
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        "Music Library",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(right: _searchExpanded ? 0 : 0),
+                        child: SizedBox(
+                          width: _searchExpanded ? 250 : 48,
+                          child: CollapsibleSearchBar(
+                            hintText: 'Search pieces...',
+                            onExpandChanged: (exp) => setState(() => _searchExpanded = exp),
+                            onChanged: (query) => setState(() => _searchQuery = query.toLowerCase()),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
 
@@ -113,12 +132,32 @@ class _LibraryBottomSheetState extends State<LibraryBottomSheet> {
       LibraryService libraryService,
       PlayAlongService playAlongService,
       ) {
+    // Filter pieces based on search query
+    final filteredPieces = _searchQuery.isEmpty
+      ? pieces
+        : pieces.where((piece)=> piece.toLowerCase().contains(_searchQuery)).toList();
+
+    if (filteredPieces.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.search_off, size: 64, color: Colors.grey[600]),
+            const SizedBox(height: 16),
+            Text(
+              'No pieces found',
+              style: TextStyle(color: Colors.grey[400], fontSize: 16),
+            ),
+          ],
+        ),
+      );
+    }
     return ListView.builder(
       controller: controller,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      itemCount: pieces.length,
+      itemCount: filteredPieces.length,
       itemBuilder: (context, index) {
-        final piece = pieces[index];
+        final piece = filteredPieces[index];
         final isLoading = _isLoading && _loadingPiece == piece;
 
         return Container(
