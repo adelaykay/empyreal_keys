@@ -54,6 +54,12 @@ class AppTheme {
       selectedItemColor: primaryColor,  // Primary or highlight color for active items
       unselectedItemColor: Color(0xFF949BA5), // Muted or on-surface color for inactive items
     ),
+    bottomSheetTheme: const BottomSheetThemeData(
+      backgroundColor: scaffoldBackgroundColor,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+    ),
   );
 
   // Define the dark theme

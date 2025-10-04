@@ -1,6 +1,8 @@
 // main.dart - Updated initialization
 import 'package:empyrealkeys/models/note_event.dart';
 import 'package:empyrealkeys/models/recording.dart';
+import 'package:empyrealkeys/services/play_along_service.dart';
+import 'package:empyrealkeys/services/library_service.dart';
 import 'package:empyrealkeys/state/recorder_service.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -30,6 +32,10 @@ void main() async {
   // Open boxes
   await Hive.openBox('pianoPrefs');
   await Hive.openBox('recorderPrefs');
+
+  // Initialize library service
+  final libraryService = LibraryService();
+  await libraryService.initialize();
 
   try {
     if (kDebugMode) {
@@ -74,6 +80,8 @@ void main() async {
           );
         }),
         ChangeNotifierProvider(create: (context) => RecorderService()),
+        ChangeNotifierProvider(create: (context) => PlayAlongService()),
+        Provider.value(value: libraryService),
       ],
       child: const PiaKnowApp()
   ));

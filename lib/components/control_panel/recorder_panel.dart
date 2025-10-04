@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../state/midi_provider.dart';
+import '../../state/piano_state.dart';
 
 class RecorderPanel extends StatefulWidget {
   final double screenWidth;
@@ -46,6 +47,16 @@ class _RecorderPanelState extends State<RecorderPanel> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
+                  // Recorder indicator
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: Icon(
+                      Icons.mic_none_rounded,
+                      color: Theme.of(context).primaryColor,
+                      size: widget.screenWidth * 0.025,
+                    ),
+                  ),
+
                   // Record / Stop button (for recording only)
                   IconButton(
                     iconSize: widget.screenHeight * 0.10,
@@ -113,7 +124,13 @@ class _RecorderPanelState extends State<RecorderPanel> {
                       color: Color(0xFFBCBCBC),
                     ),
                     onPressed: () {
+                      // Stop all active MIDI notes first
+                      for (int note = 0; note < 128; note++) {
+                        midi.stopNote(midiNote: note);
+                      }
                       recorder.stopPlayback();
+                      final pianoState = Provider.of<PianoState>(context, listen: false);
+                      pianoState.clearActivePlayAlongNotes();
                     },
                   ),
 
@@ -129,7 +146,10 @@ class _RecorderPanelState extends State<RecorderPanel> {
                     onPressed: () {
                       showModalBottomSheet(
                         context: context,
-                        backgroundColor: Colors.transparent,
+                        backgroundColor: const Color(0xFF2C2C2E),
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+                        ),
                         isScrollControlled: true,
                         builder: (context) => const RecordingsBottomSheet(),
                       );

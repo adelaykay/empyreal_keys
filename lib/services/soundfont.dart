@@ -34,15 +34,9 @@ class SoundfontService {
   Future<void> downloadSoundfont(String filename) async {
     final directory = await getApplicationDocumentsDirectory();
     final filePath = '${directory.path}/$filename';
-    print('Downloading to: $filePath');
-
-    // Get the temporary directory instead of application documents directory
-    // final directory = await getTemporaryDirectory();
-    // final filePath = '${directory.path}/$filename';
-    // if (kDebugMode) {
-    //   print('Downloading to: $filePath');
-    // }
-
+    if (kDebugMode) {
+      print('Downloading to: $filePath');
+    }
 
     final ref = _storage.ref().child('soundfonts/$filename');
     try {

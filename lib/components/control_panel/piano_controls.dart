@@ -1,5 +1,9 @@
+import 'dart:math';
+
 import 'package:empyrealkeys/components/control_panel/knob_widget.dart';
+import 'package:empyrealkeys/components/control_panel/play_along_panel.dart';
 import 'package:empyrealkeys/components/control_panel/recorder_panel.dart';
+import 'package:empyrealkeys/services/play_along_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:iconify_flutter/icons/dashicons.dart';
@@ -7,6 +11,7 @@ import 'package:iconify_flutter/icons/mdi.dart';
 import 'package:iconify_flutter/iconify_flutter.dart';
 import 'package:empyrealkeys/components/control_panel/display.dart';
 import 'package:provider/provider.dart';
+import '../../state/midi_provider.dart';
 import '../../state/piano_state.dart';
 import 'about_dialog.dart';
 import 'keyboard_settings.dart';
@@ -41,6 +46,10 @@ class _ControlPanelState extends State<ControlPanel> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
+    final pianoState = Provider.of<PianoState>(context);
+    final playAlongService = Provider.of<PlayAlongService>(context);
+    final midiProvider = Provider.of<MidiProvider>(context, listen: false);
+
     Future<bool> showExitConfirmationDialog(BuildContext context) async {
       return await showDialog<bool>(
             context: context,
@@ -117,7 +126,7 @@ class _ControlPanelState extends State<ControlPanel> {
               bottomRight: Radius.circular(15),
               bottomLeft: Radius.circular(15))),
       width: double.infinity,
-      height: screenHeight / 3.5,
+      height: pianoState.panelHeight ?? screenHeight / 3.5,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -132,18 +141,26 @@ class _ControlPanelState extends State<ControlPanel> {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 25.0),
                   child: IconButton(
-                      onPressed: () async {
-                        final shouldExit =
-                            await showExitConfirmationDialog(context);
-                        if (shouldExit) {
-                          SystemNavigator.pop();
+                    onPressed: () async {
+                      if (pianoState.showingScore) {
+                        // Stop all active MIDI notes first
+                        for (int note = 0; note < 128; note++) {
+                          midiProvider.stopNote(midiNote: note);
                         }
-                      },
-                      icon: const Iconify(
-                        Dashicons.exit,
-                        color: Color(0xFFFFFFFF),
-                        size: 36,
-                      )),
+                        playAlongService.stopPlayback();
+                        pianoState.clearActivePlayAlongNotes();
+                        pianoState.hideScore(screenHeight);
+                      } else {
+                        final shouldExit = await showExitConfirmationDialog(context);
+                        if (shouldExit) SystemNavigator.pop();
+                      }
+                    },
+                    icon: Iconify(
+                      pianoState.showingScore ? Mdi.arrow_left : Dashicons.exit,
+                      color: Colors.white,
+                      size: 36,
+                    ),
+                  ),
                 ),
               ),
               SizedBox(
@@ -153,15 +170,15 @@ class _ControlPanelState extends State<ControlPanel> {
           ),
 
           // Page indicator dots (left side)
-          Padding(
+          pianoState.showingScore ? const SizedBox() : Padding(
             padding: const EdgeInsets.only(left: 8.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(3, (index) {
+              children: List.generate(4, (index) {
                 return Container(
                   margin: const EdgeInsets.symmetric(vertical: 6),
-                  width: 10,
-                  height: 10,
+                  width: 7,
+                  height: 7,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: _currentPage == index
@@ -224,6 +241,9 @@ class _ControlPanelState extends State<ControlPanel> {
 
                 // --- Page 2: Metronome Controls ---
                 MetronomePanel(screenWidth: screenWidth, screenHeight: screenHeight),
+
+                // --- Page 3: Play Along Controls ---
+                PlayAlongPanel(screenWidth: screenWidth, screenHeight: screenHeight),
 
               ],
             ),

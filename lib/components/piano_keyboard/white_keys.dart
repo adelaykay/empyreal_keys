@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../../state/piano_state.dart';
 
 class WhiteKey extends StatefulWidget {
   final String keyType;
@@ -21,25 +24,34 @@ class _WhiteKeyState extends State<WhiteKey> {
 
   @override
   Widget build(BuildContext context) {
+    final pianoState = Provider.of<PianoState>(context);
+    final octave = pianoState.octave;
+    final midiNote = 12 + (octave * 12) + widget.idx;
+    final isHighlighted = pianoState.activePlayAlongNotes.contains(midiNote);
+
     return GestureDetector(
-      onPanStart: (details){
+      onPanStart: (details) {
         setState(() {
           _isPressed = false;
         });
       },
-      onTapDown: (details){
+      onTapDown: (details) {
         setState(() {
           _isPressed = true;
         });
       },
-      onTapUp: (details){
+      onTapUp: (details) {
         setState(() {
           _isPressed = false;
         });
       },
       child: Container(
         decoration: BoxDecoration(
-          color: _isPressed ? Colors.grey[300] : Colors.white,
+          color: _isPressed
+              ? Colors.grey[300]
+              : isHighlighted
+                  ? Theme.of(context).primaryColor.withValues(alpha: 0.8)
+                  : Colors.white,
           borderRadius: _getBorderRadius(widget.keyType),
         ),
         margin: const EdgeInsets.all(2),

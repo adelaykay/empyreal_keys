@@ -244,7 +244,7 @@ class _KeyboardSettingsState extends State<KeyboardSettings> {
                                         file != 'Default.SF2' && !midi.downloadedSoundfonts.contains(file)
                                             ? Icon(Icons.download_rounded,
                                                 color: Colors.orangeAccent)
-                                            : Icon(Icons.check_circle),
+                                            : Icon(Icons.check_circle, color: Theme.of(context).colorScheme.primary,),
                                       ],
                                     ),
                                   );
@@ -258,35 +258,38 @@ class _KeyboardSettingsState extends State<KeyboardSettings> {
                                             (i) => i.values.first == selected)
                                         .keys
                                         .first;
+                                final midi = Provider.of<MidiProvider>(context,
+                                    listen: false);
 
-                                Provider.of<MidiProvider>(context,
-                                        listen: false)
-                                    .isSoundfontLoaded = false;
+
+                                    midi.isSoundfontLoaded = false;
                                 setState(() {
                                   selectedInstrumentName = name;
                                 });
-
+                                midi.unloadMidi();
                                 pianoState.setInstrument(name);
                                 pianoState.setInstrument(selected);
-                                Provider.of<MidiProvider>(ctx, listen: false)
-                                    .loadMidi(selected);
+                                midi.loadMidi(selected);
                               }
                             },
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  selectedInstrumentName ??
-                                      'Select instrument…',
-                                  style: TextStyle(
-                                      fontSize: screenHeight * 0.03,
-                                      color: Colors.teal),
-                                ),
-                                SizedBox(width: 30),
-                                Icon(Icons.arrow_drop_down,
-                                    color: Colors.orangeAccent,
-                                    size: screenHeight * 0.04),
-                              ],
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    selectedInstrumentName ??
+                                        'Select instrument…',
+                                    style: TextStyle(
+                                        fontSize: screenHeight * 0.03,
+                                        color: Colors.teal),
+                                  ),
+                                  SizedBox(width: 30),
+                                  Icon(Icons.arrow_drop_down,
+                                      color: Colors.orangeAccent,
+                                      size: screenHeight * 0.04),
+                                ],
+                              ),
                             ),
                             // child: ListTile(
                             //   title: Text(

@@ -14,10 +14,9 @@ class RecordingsBottomSheet extends StatelessWidget {
 
     return Container(
       decoration: const BoxDecoration(
-        color: Color(0xFF1C1C1E),
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16, top: 6),
       height: MediaQuery.of(context).size.height * 0.8,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -29,7 +28,7 @@ class RecordingsBottomSheet extends StatelessWidget {
               height: 5,
               margin: const EdgeInsets.only(bottom: 16),
               decoration: BoxDecoration(
-                color: Colors.grey[700],
+                // color: Colors.grey[700],
                 borderRadius: BorderRadius.circular(10),
               ),
             ),

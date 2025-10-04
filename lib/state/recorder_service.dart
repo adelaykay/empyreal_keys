@@ -177,6 +177,7 @@ class RecorderService extends ChangeNotifier {
   void pausePlayback() {
     if (_isPlayingRecording && !_isPaused) {
       _isPaused = true;
+
       notifyListeners();
     }
   }

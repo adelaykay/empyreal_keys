@@ -14,7 +14,7 @@ class MidiProvider with ChangeNotifier {
     loadMidi(font); // Initialize the MIDI with the given soundfont
   }
 
-  // Load the soundfont file and assign its ID to the variable _soundfontId
+  // Load the soundfont file
   void loadMidi(String font) async {
     if (kDebugMode) {
       print('Loading soundfont: $font');
@@ -49,6 +49,13 @@ class MidiProvider with ChangeNotifier {
     notifyListeners(); // Notify listeners that the soundfont is ready
   }
 
+  // Unload the soundfont file
+  void unloadMidi() async {
+    await FlutterMidi16kb.unloadSoundfont();
+    isSoundfontLoaded = false;
+    notifyListeners();
+  }
+
   // Play a MIDI note with a specific key and velocity
   void playNote({
     required int midiNote,
@@ -74,6 +81,13 @@ class MidiProvider with ChangeNotifier {
         channel: channel,
         key: midiNote,
       );
+    }
+  }
+
+  // Stop all playing MIDI notes
+  void stopAllNotes() {
+    if (isSoundfontLoaded) {
+      FlutterMidi16kb.stopAllNotes();
     }
   }
 }

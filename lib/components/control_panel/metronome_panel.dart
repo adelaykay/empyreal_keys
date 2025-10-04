@@ -60,36 +60,12 @@ class _MetronomePanelState extends State<MetronomePanel> {
           return Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              // AnimatedCrossFade(
-              //   firstChild: Row(
-              //     children: [
-              //       Icon(Icons.access_time,
-              //           color: Theme.of(context).primaryColor,
-              //           size: widget.screenHeight * 0.05),
-              //       const SizedBox(width: 8),
-              //       Text(
-              //         "Metronome",
-              //         style: TextStyle(
-              //           fontSize: widget.screenHeight * 0.05,
-              //           fontWeight: FontWeight.bold,
-              //           color: Theme.of(context).primaryColor,
-              //         ),
-              //       ),
-              //     ],
-              //   ),
-              //   secondChild: const SizedBox.shrink(),
-              //   crossFadeState: showAdvanced
-              //       ? CrossFadeState.showSecond
-              //       : CrossFadeState.showFirst,
-              //   duration: const Duration(milliseconds: 400),
-              // ),
-
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   // Header Row
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                     decoration: BoxDecoration(
                       color: const Color(0xFF2C2C2E),
                       borderRadius: BorderRadius.circular(20),
@@ -110,7 +86,7 @@ class _MetronomePanelState extends State<MetronomePanel> {
                                 const EdgeInsets.symmetric(horizontal: 8.0),
                             child: Icon(Icons.access_time_rounded,
                                 color: Theme.of(context).primaryColor,
-                                size: widget.screenHeight * 0.08),
+                                size: widget.screenHeight * 0.05),
                           ),
                           secondChild: SizedBox(
                             width: 8,

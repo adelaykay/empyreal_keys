@@ -66,7 +66,9 @@ class _PianoKeysState extends State<PianoKeys> {
             bottom: 10,
             child: Text(
               notes[whiteKeyIndices[i]],
-              style: TextStyle(color: showNoteName ? Colors.black45 : Colors.transparent, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                  color: showNoteName ? Colors.black45 : Colors.transparent,
+                  fontWeight: FontWeight.bold),
             )),
       );
     }
