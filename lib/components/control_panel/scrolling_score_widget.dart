@@ -2,6 +2,9 @@
 import 'package:flutter/material.dart';
 import '../../models/note_event.dart';
 import '../../models/recording.dart';
+import 'staff_notation_view.dart';
+
+enum ScoreViewMode { pianoRoll, staff }
 
 class NoteBlock {
   final int midiNote;
@@ -17,7 +20,7 @@ class NoteBlock {
   });
 }
 
-class ScrollingScoreWidget extends StatelessWidget {
+class ScrollingScoreWidget extends StatefulWidget {
   final Recording recording;
   final double currentPosition;
   final double screenHeight;
@@ -29,7 +32,127 @@ class ScrollingScoreWidget extends StatelessWidget {
     required this.screenHeight,
   });
 
-  // Convert note events to note blocks with durations
+  @override
+  State<ScrollingScoreWidget> createState() => _ScrollingScoreWidgetState();
+}
+
+class _ScrollingScoreWidgetState extends State<ScrollingScoreWidget> {
+  ScoreViewMode _viewMode = ScoreViewMode.pianoRoll;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        // Score view
+        _viewMode == ScoreViewMode.pianoRoll
+            ? _PianoRollView(
+          recording: widget.recording,
+          currentPosition: widget.currentPosition,
+          screenHeight: widget.screenHeight,
+        )
+            : StaffNotationView(
+          recording: widget.recording,
+          currentPosition: widget.currentPosition,
+          screenHeight: widget.screenHeight,
+        ),
+
+        // View toggle button
+        Positioned(
+          top: 8,
+          right: 8,
+          child: Container(
+            decoration: BoxDecoration(
+              color: Color(0xFF2C2C2E),
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.3),
+                  blurRadius: 4,
+                  offset: Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _ViewToggleButton(
+                  icon: Icons.piano,
+                  label: 'Roll',
+                  isSelected: _viewMode == ScoreViewMode.pianoRoll,
+                  onTap: () => setState(() => _viewMode = ScoreViewMode.pianoRoll),
+                ),
+                _ViewToggleButton(
+                  icon: Icons.music_note,
+                  label: 'Staff',
+                  isSelected: _viewMode == ScoreViewMode.staff,
+                  onTap: () => setState(() => _viewMode = ScoreViewMode.staff),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _ViewToggleButton extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const _ViewToggleButton({
+    required this.icon,
+    required this.label,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+          color: isSelected ? Theme.of(context).primaryColor : Colors.transparent,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              icon,
+              size: 16,
+              color: isSelected ? Colors.white : Colors.grey,
+            ),
+            SizedBox(width: 4),
+            Text(
+              label,
+              style: TextStyle(
+                color: isSelected ? Colors.white : Colors.grey,
+                fontSize: 12,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _PianoRollView extends StatelessWidget {
+  final Recording recording;
+  final double currentPosition;
+  final double screenHeight;
+
+  const _PianoRollView({
+    required this.recording,
+    required this.currentPosition,
+    required this.screenHeight,
+  });
+
   List<NoteBlock> _buildNoteBlocks() {
     final blocks = <NoteBlock>[];
     final Map<int, NoteEvent> activeNotes = {};
@@ -58,11 +181,10 @@ class ScrollingScoreWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final notes = _buildNoteBlocks();
-    final pixelsPerSecond = 150.0; // Adjust for scroll speed
+    final pixelsPerSecond = 150.0;
     final noteHeight = 8.0;
-    final trackHeight = screenHeight * 0.25;
+    final trackHeight = screenHeight * 0.35;
 
-    // Find pitch range
     final pitches = notes.map((n) => n.midiNote).toList();
     final minPitch = pitches.isEmpty ? 48 : pitches.reduce((a, b) => a < b ? a : b);
     final maxPitch = pitches.isEmpty ? 84 : pitches.reduce((a, b) => a > b ? a : b);
@@ -84,7 +206,6 @@ class ScrollingScoreWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         child: Stack(
           children: [
-            // Scrolling note track
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               physics: NeverScrollableScrollPhysics(),
@@ -105,7 +226,6 @@ class ScrollingScoreWidget extends StatelessWidget {
               ),
             ),
 
-            // Playhead (vertical line)
             Positioned(
               left: 50,
               top: 0,
@@ -126,7 +246,6 @@ class ScrollingScoreWidget extends StatelessWidget {
               ),
             ),
 
-            // Time markers
             Positioned(
               top: 0,
               left: 0,
@@ -170,14 +289,12 @@ class ScorePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    // Draw reference lines (piano roll style)
     final linePaint = Paint()
       ..color = Colors.white.withOpacity(0.05)
       ..strokeWidth = 1;
 
     for (int i = minPitch; i <= maxPitch; i++) {
       final y = (maxPitch - i) * pitchSpacing;
-      // Highlight C notes
       if (i % 12 == 0) {
         canvas.drawLine(
           Offset(0, y),
@@ -195,25 +312,22 @@ class ScorePainter extends CustomPainter {
       }
     }
 
-    // Draw notes
     for (final note in notes) {
       final x = note.startTime * pixelsPerSecond;
       final width = (note.duration * pixelsPerSecond).clamp(2.0, double.infinity);
       final y = (maxPitch - note.midiNote) * pitchSpacing - noteHeight / 2;
 
-      // Color based on whether note is active
       final isActive = currentPosition >= note.startTime &&
           currentPosition < (note.startTime + note.duration);
 
       final noteColor = isActive
-          ? Color(0xFF00FF00) // Active: green
+          ? Color(0xFF00FF00)
           : (note.midiNote % 12 == 1 || note.midiNote % 12 == 3 ||
           note.midiNote % 12 == 6 || note.midiNote % 12 == 8 ||
           note.midiNote % 12 == 10)
-          ? Color(0xFF444444) // Black keys: dark gray
-          : Color(0xFF2196F3); // White keys: blue
+          ? Color(0xFF444444)
+          : Color(0xFF2196F3);
 
-      // Draw note rectangle with glow effect
       final notePaint = Paint()
         ..color = noteColor
         ..style = PaintingStyle.fill;
@@ -230,7 +344,6 @@ class ScorePainter extends CustomPainter {
       canvas.drawRRect(rect, glowPaint);
       canvas.drawRRect(rect, notePaint);
 
-      // Add border for active notes
       if (isActive) {
         canvas.drawRRect(
           rect,
@@ -267,7 +380,6 @@ class TimeMarkerPainter extends CustomPainter {
       fontSize: 10,
     );
 
-    // Draw time at playhead
     textPainter.text = TextSpan(
       text: '${currentPosition.toStringAsFixed(1)}s',
       style: textStyle,

@@ -21,7 +21,7 @@ Intuitive UI: Sleek design with easy access to settings and practice sessions.
 
 1. Clone the repository:
 
-git clone https://github.com/yourusername/empyreal-keys.git
+git clone https://github.com/adelaykay/empyreal_keys.git
 
 
 2. Navigate to the project folder:
@@ -44,6 +44,12 @@ flutter run
 
 Contributions are welcome! Feel free to submit issues or pull requests.
 
-## License
+## License Summary
 
-This project is licensed under the MIT License.
+**Vocal Memo** is proprietary software developed and owned by **Empyreal Works**.  
+The source code and all accompanying assets are **not open-source** and may not be copied, modified, or redistributed without explicit permission.
+
+Personal and internal business use is allowed under the [Proprietary/Commercial License](./LICENSE.md).  
+Commercial redistribution or inclusion in other products requires a separate written agreement.
+
+📧 For licensing or redistribution inquiries: **hello@empyrealworks.com**

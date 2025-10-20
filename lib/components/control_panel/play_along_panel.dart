@@ -109,37 +109,45 @@ class _PlayAlongPanelState extends State<PlayAlongPanel> {
 
           // Progress bar
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-            child: Column(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
+            child: Row(
               children: [
-                SliderTheme(
-                  data: SliderThemeData(
-                    thumbShape: RoundSliderThumbShape(enabledThumbRadius: 6),
-                    trackHeight: 3,
-                  ),
-                  child: Slider(
-                    value: playAlongService.playbackPosition.clamp(0.0, playAlongService.totalDuration.isFinite ? playAlongService.totalDuration : 1.0),
-                    min: 0,
-                    max: playAlongService.totalDuration.isFinite ? playAlongService.totalDuration : 1.0,
-                    activeColor: Theme.of(context).primaryColor,
-                    inactiveColor: Colors.grey,
-                    onChanged: (value) {
-                      playAlongService.seekTo(value);
-                    },
+                Text(
+                  _formatDuration(playAlongService.playbackPosition),
+                  style: TextStyle(color: Colors.grey, fontSize: 12),
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 18.0),
+                    child: SliderTheme(
+                      data: SliderThemeData(
+                        thumbShape:
+                            RoundSliderThumbShape(enabledThumbRadius: 8),
+                        trackHeight: 3,
+                      ),
+                      child: Slider(
+                        padding: const EdgeInsets.symmetric(vertical: 6),
+                        value: playAlongService.playbackPosition.clamp(
+                            0.0,
+                            playAlongService.totalDuration.isFinite
+                                ? playAlongService.totalDuration
+                                : 1.0),
+                        min: 0,
+                        max: playAlongService.totalDuration.isFinite
+                            ? playAlongService.totalDuration
+                            : 1.0,
+                        activeColor: Theme.of(context).primaryColor,
+                        inactiveColor: Colors.grey,
+                        onChanged: (value) {
+                          playAlongService.seekTo(value);
+                        },
+                      ),
+                    ),
                   ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      _formatDuration(playAlongService.playbackPosition),
-                      style: TextStyle(color: Colors.grey, fontSize: 12),
-                    ),
-                    Text(
-                      _formatDuration(playAlongService.totalDuration),
-                      style: TextStyle(color: Colors.grey, fontSize: 12),
-                    ),
-                  ],
+                Text(
+                  _formatDuration(playAlongService.totalDuration),
+                  style: TextStyle(color: Colors.grey, fontSize: 12),
                 ),
               ],
             ),
@@ -202,7 +210,8 @@ class _PlayAlongPanelState extends State<PlayAlongPanel> {
                         context: context,
                         backgroundColor: const Color(0xFF2C2C2E),
                         shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+                          borderRadius:
+                              BorderRadius.vertical(top: Radius.circular(30)),
                         ),
                         isScrollControlled: true,
                         builder: (context) => const LibraryBottomSheet(),
@@ -226,7 +235,8 @@ class _PlayAlongPanelState extends State<PlayAlongPanel> {
                         context: context,
                         backgroundColor: const Color(0xFF2C2C2E),
                         shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+                          borderRadius:
+                              BorderRadius.vertical(top: Radius.circular(30)),
                         ),
                         isScrollControlled: true,
                         builder: (context) => const PersonalBottomSheet(),
@@ -244,7 +254,9 @@ class _PlayAlongPanelState extends State<PlayAlongPanel> {
                         padding: const EdgeInsets.symmetric(horizontal: 12.0),
                         child: GestureDetector(
                           onTap: () {
-                            final newTempo = (playAlongService.tempoMultiplier - 0.05).clamp(0.5, 1.5);
+                            final newTempo =
+                                (playAlongService.tempoMultiplier - 0.05)
+                                    .clamp(0.5, 1.5);
                             playAlongService.setTempoMultiplier(newTempo);
                           },
                           child: Icon(
@@ -257,7 +269,8 @@ class _PlayAlongPanelState extends State<PlayAlongPanel> {
                       InkWell(
                         onTap: () async {
                           final controller = TextEditingController(
-                            text: '${(playAlongService.tempoMultiplier * 100).toInt()}',
+                            text:
+                                '${(playAlongService.tempoMultiplier * 100).toInt()}',
                           );
                           final newVal = await showDialog<int>(
                             context: context,
@@ -286,7 +299,8 @@ class _PlayAlongPanelState extends State<PlayAlongPanel> {
                                 ),
                                 TextButton(
                                   onPressed: () {
-                                    final parsed = int.tryParse(controller.text);
+                                    final parsed =
+                                        int.tryParse(controller.text);
                                     Navigator.pop(context, parsed);
                                   },
                                   child: const Text("OK"),
@@ -295,7 +309,8 @@ class _PlayAlongPanelState extends State<PlayAlongPanel> {
                             ),
                           );
                           if (newVal != null) {
-                            playAlongService.setTempoMultiplier((newVal / 100).clamp(0.5, 1.5));
+                            playAlongService.setTempoMultiplier(
+                                (newVal / 100).clamp(0.5, 1.5));
                           }
                         },
                         child: Text(
@@ -311,7 +326,9 @@ class _PlayAlongPanelState extends State<PlayAlongPanel> {
                         padding: const EdgeInsets.symmetric(horizontal: 12.0),
                         child: GestureDetector(
                           onTap: () {
-                            final newTempo = (playAlongService.tempoMultiplier + 0.05).clamp(0.5, 1.5);
+                            final newTempo =
+                                (playAlongService.tempoMultiplier + 0.05)
+                                    .clamp(0.5, 1.5);
                             playAlongService.setTempoMultiplier(newTempo);
                           },
                           child: Icon(
@@ -329,7 +346,8 @@ class _PlayAlongPanelState extends State<PlayAlongPanel> {
                     iconSize: widget.screenHeight * 0.1,
                     onPressed: () {
                       pianoState.setLoopEnabled(!pianoState.loopEnabled);
-                      if (pianoState.loopEnabled && playAlongService.loopStart == null) {
+                      if (pianoState.loopEnabled &&
+                          playAlongService.loopStart == null) {
                         // Set default loop region (first 30% to 70% of piece)
                         final duration = playAlongService.totalDuration;
                         playAlongService.setLoopRegion(
