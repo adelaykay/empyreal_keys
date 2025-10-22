@@ -1,8 +1,8 @@
-// models/recording.dart
+// models/recording.dart (Extended version)
 import 'package:hive/hive.dart';
 import 'note_event.dart';
 
-part 'recording.g.dart'; // This will be generated
+part 'recording.g.dart';
 
 @HiveType(typeId: 1)
 class Recording extends HiveObject {
@@ -27,6 +27,25 @@ class Recording extends HiveObject {
   @HiveField(6)
   bool alignWithMetronome;
 
+  // NEW FIELDS for music notation
+  @HiveField(7)
+  int timeSignatureNumerator;
+
+  @HiveField(8)
+  int timeSignatureDenominator;
+
+  @HiveField(9)
+  int keySignatureSharps; // Positive for sharps, negative for flats
+
+  @HiveField(10)
+  bool keySignatureIsMinor;
+
+  @HiveField(11)
+  double beatsPerMinute; // Tempo
+
+  @HiveField(12)
+  int ticksPerQuarterNote; // MIDI resolution
+
   Recording({
     required this.id,
     required this.title,
@@ -35,6 +54,12 @@ class Recording extends HiveObject {
     this.loopPlayback = false,
     this.instrument = "piano",
     this.alignWithMetronome = false,
+    this.timeSignatureNumerator = 4,
+    this.timeSignatureDenominator = 4,
+    this.keySignatureSharps = 0,
+    this.keySignatureIsMinor = false,
+    this.beatsPerMinute = 120.0,
+    this.ticksPerQuarterNote = 480,
   });
 
   Recording copyWith({
@@ -45,6 +70,12 @@ class Recording extends HiveObject {
     bool? loopPlayback,
     String? instrument,
     bool? alignWithMetronome,
+    int? timeSignatureNumerator,
+    int? timeSignatureDenominator,
+    int? keySignatureSharps,
+    bool? keySignatureIsMinor,
+    double? beatsPerMinute,
+    int? ticksPerQuarterNote,
   }) {
     return Recording(
       id: id ?? this.id,
@@ -54,6 +85,12 @@ class Recording extends HiveObject {
       loopPlayback: loopPlayback ?? this.loopPlayback,
       instrument: instrument ?? this.instrument,
       alignWithMetronome: alignWithMetronome ?? this.alignWithMetronome,
+      timeSignatureNumerator: timeSignatureNumerator ?? this.timeSignatureNumerator,
+      timeSignatureDenominator: timeSignatureDenominator ?? this.timeSignatureDenominator,
+      keySignatureSharps: keySignatureSharps ?? this.keySignatureSharps,
+      keySignatureIsMinor: keySignatureIsMinor ?? this.keySignatureIsMinor,
+      beatsPerMinute: beatsPerMinute ?? this.beatsPerMinute,
+      ticksPerQuarterNote: ticksPerQuarterNote ?? this.ticksPerQuarterNote,
     );
   }
 }

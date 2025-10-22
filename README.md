@@ -46,7 +46,7 @@ Contributions are welcome! Feel free to submit issues or pull requests.
 
 ## License Summary
 
-**Vocal Memo** is proprietary software developed and owned by **Empyreal Works**.  
+**Vocal Memo** is proprietary software developed and owned by **Empyreal Digital Works**.  
 The source code and all accompanying assets are **not open-source** and may not be copied, modified, or redistributed without explicit permission.
 
 Personal and internal business use is allowed under the [Proprietary/Commercial License](./LICENSE.md).  

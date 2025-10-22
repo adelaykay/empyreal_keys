@@ -1,24 +1,13 @@
-// components/control_panel/scrolling_score_widget.dart
+// Temporary test code to add to scrolling_score_widget.dart
+// Replace the build method temporarily to test quantization
+
 import 'package:flutter/material.dart';
 import '../../models/note_event.dart';
 import '../../models/recording.dart';
-import 'staff_notation_view.dart';
+import '../../models/score_data.dart';
+import '../debug/quantization_test_widget.dart';
 
 enum ScoreViewMode { pianoRoll, staff }
-
-class NoteBlock {
-  final int midiNote;
-  final double startTime;
-  final double duration;
-  final int velocity;
-
-  NoteBlock({
-    required this.midiNote,
-    required this.startTime,
-    required this.duration,
-    required this.velocity,
-  });
-}
 
 class ScrollingScoreWidget extends StatefulWidget {
   final Recording recording;
@@ -43,32 +32,28 @@ class _ScrollingScoreWidgetState extends State<ScrollingScoreWidget> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        // Score view
+        // Main view
         _viewMode == ScoreViewMode.pianoRoll
             ? _PianoRollView(
           recording: widget.recording,
           currentPosition: widget.currentPosition,
           screenHeight: widget.screenHeight,
         )
-            : StaffNotationView(
-          recording: widget.recording,
-          currentPosition: widget.currentPosition,
-          screenHeight: widget.screenHeight,
-        ),
+            : QuantizationTestWidget(recording: widget.recording),
 
-        // View toggle button
+        // Floating toggle button in top-right corner
         Positioned(
           top: 8,
           right: 8,
           child: Container(
             decoration: BoxDecoration(
-              color: Color(0xFF2C2C2E),
+              color: const Color(0xFF2C2C2E),
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.3),
                   blurRadius: 4,
-                  offset: Offset(0, 2),
+                  offset: const Offset(0, 2),
                 ),
               ],
             ),
@@ -114,19 +99,20 @@ class _ViewToggleButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
           color: isSelected ? Theme.of(context).primaryColor : Colors.transparent,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
               icon,
               size: 16,
               color: isSelected ? Colors.white : Colors.grey,
             ),
-            SizedBox(width: 4),
+            const SizedBox(width: 4),
             Text(
               label,
               style: TextStyle(
@@ -142,6 +128,7 @@ class _ViewToggleButton extends StatelessWidget {
   }
 }
 
+// Keep your existing _PianoRollView class unchanged
 class _PianoRollView extends StatelessWidget {
   final Recording recording;
   final double currentPosition;
@@ -268,6 +255,21 @@ class _PianoRollView extends StatelessWidget {
   }
 }
 
+class NoteBlock {
+  final int midiNote;
+  final double startTime;
+  final double duration;
+  final int velocity;
+
+  NoteBlock({
+    required this.midiNote,
+    required this.startTime,
+    required this.duration,
+    required this.velocity,
+  });
+}
+
+// Keep your existing painters
 class ScorePainter extends CustomPainter {
   final List<NoteBlock> notes;
   final double pixelsPerSecond;

@@ -1,4 +1,4 @@
-// state/playalong_service.dart
+// services/playalong_service.dart
 import 'dart:async';
 import 'package:flutter/material.dart';
 import '../models/note_event.dart';

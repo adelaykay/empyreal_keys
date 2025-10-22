@@ -24,13 +24,19 @@ class RecordingAdapter extends TypeAdapter<Recording> {
       loopPlayback: fields[4] as bool,
       instrument: fields[5] as String,
       alignWithMetronome: fields[6] as bool,
+      timeSignatureNumerator: fields[7] as int,
+      timeSignatureDenominator: fields[8] as int,
+      keySignatureSharps: fields[9] as int,
+      keySignatureIsMinor: fields[10] as bool,
+      beatsPerMinute: fields[11] as double,
+      ticksPerQuarterNote: fields[12] as int,
     );
   }
 
   @override
   void write(BinaryWriter writer, Recording obj) {
     writer
-      ..writeByte(7)
+      ..writeByte(13)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -44,7 +50,19 @@ class RecordingAdapter extends TypeAdapter<Recording> {
       ..writeByte(5)
       ..write(obj.instrument)
       ..writeByte(6)
-      ..write(obj.alignWithMetronome);
+      ..write(obj.alignWithMetronome)
+      ..writeByte(7)
+      ..write(obj.timeSignatureNumerator)
+      ..writeByte(8)
+      ..write(obj.timeSignatureDenominator)
+      ..writeByte(9)
+      ..write(obj.keySignatureSharps)
+      ..writeByte(10)
+      ..write(obj.keySignatureIsMinor)
+      ..writeByte(11)
+      ..write(obj.beatsPerMinute)
+      ..writeByte(12)
+      ..write(obj.ticksPerQuarterNote);
   }
 
   @override

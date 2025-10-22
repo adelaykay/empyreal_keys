@@ -1,4 +1,5 @@
 // services/library_service.dart
+import 'package:empyrealkeys/services/recording_migrator.dart';
 import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
@@ -51,6 +52,8 @@ class LibraryService {
 
   Future<void> initialize() async {
     _libraryBox = await Hive.openBox<Recording>(_boxName);
+
+
   }
 
   // Get all library pieces by difficulty
