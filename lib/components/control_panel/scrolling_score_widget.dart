@@ -1,10 +1,10 @@
 // Temporary test code to add to scrolling_score_widget.dart
 // Replace the build method temporarily to test quantization
 
+import 'package:empyrealkeys/components/notation/staff_notation_view.dart';
 import 'package:flutter/material.dart';
 import '../../models/note_event.dart';
 import '../../models/recording.dart';
-import '../../models/score_data.dart';
 import '../debug/quantization_test_widget.dart';
 
 enum ScoreViewMode { pianoRoll, staff }
@@ -35,11 +35,15 @@ class _ScrollingScoreWidgetState extends State<ScrollingScoreWidget> {
         // Main view
         _viewMode == ScoreViewMode.pianoRoll
             ? _PianoRollView(
-          recording: widget.recording,
-          currentPosition: widget.currentPosition,
-          screenHeight: widget.screenHeight,
-        )
-            : QuantizationTestWidget(recording: widget.recording),
+                recording: widget.recording,
+                currentPosition: widget.currentPosition,
+                screenHeight: widget.screenHeight,
+              )
+            : StaffNotationView(
+                recording: widget.recording,
+                currentPosition: widget.currentPosition,
+                screenHeight: widget.screenHeight,
+              ),
 
         // Floating toggle button in top-right corner
         Positioned(
@@ -64,7 +68,8 @@ class _ScrollingScoreWidgetState extends State<ScrollingScoreWidget> {
                   icon: Icons.piano,
                   label: 'Roll',
                   isSelected: _viewMode == ScoreViewMode.pianoRoll,
-                  onTap: () => setState(() => _viewMode = ScoreViewMode.pianoRoll),
+                  onTap: () =>
+                      setState(() => _viewMode = ScoreViewMode.pianoRoll),
                 ),
                 _ViewToggleButton(
                   icon: Icons.music_note,
@@ -101,7 +106,8 @@ class _ViewToggleButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
-          color: isSelected ? Theme.of(context).primaryColor : Colors.transparent,
+          color:
+              isSelected ? Theme.of(context).primaryColor : Colors.transparent,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Row(
@@ -151,7 +157,8 @@ class _PianoRollView extends StatelessWidget {
         final startEvent = activeNotes.remove(event.midiNote);
         if (startEvent != null) {
           final duration = (event.timestamp.inMilliseconds -
-              startEvent.timestamp.inMilliseconds) / 1000.0;
+                  startEvent.timestamp.inMilliseconds) /
+              1000.0;
           blocks.add(NoteBlock(
             midiNote: startEvent.midiNote,
             startTime: startEvent.timestamp.inMilliseconds / 1000.0,
@@ -173,14 +180,17 @@ class _PianoRollView extends StatelessWidget {
     final trackHeight = screenHeight * 0.35;
 
     final pitches = notes.map((n) => n.midiNote).toList();
-    final minPitch = pitches.isEmpty ? 48 : pitches.reduce((a, b) => a < b ? a : b);
-    final maxPitch = pitches.isEmpty ? 84 : pitches.reduce((a, b) => a > b ? a : b);
+    final minPitch =
+        pitches.isEmpty ? 48 : pitches.reduce((a, b) => a < b ? a : b);
+    final maxPitch =
+        pitches.isEmpty ? 84 : pitches.reduce((a, b) => a > b ? a : b);
     final pitchRange = (maxPitch - minPitch).clamp(12, 48);
     final pitchSpacing = trackHeight / pitchRange;
 
     final totalWidth = recording.events.isEmpty
         ? 100.0
-        : (recording.events.last.timestamp.inMilliseconds / 1000.0) * pixelsPerSecond;
+        : (recording.events.last.timestamp.inMilliseconds / 1000.0) *
+            pixelsPerSecond;
 
     return Container(
       margin: EdgeInsets.all(8),
@@ -212,7 +222,6 @@ class _PianoRollView extends StatelessWidget {
                 ),
               ),
             ),
-
             Positioned(
               left: 50,
               top: 0,
@@ -232,7 +241,6 @@ class _PianoRollView extends StatelessWidget {
                 ),
               ),
             ),
-
             Positioned(
               top: 0,
               left: 0,
@@ -316,7 +324,8 @@ class ScorePainter extends CustomPainter {
 
     for (final note in notes) {
       final x = note.startTime * pixelsPerSecond;
-      final width = (note.duration * pixelsPerSecond).clamp(2.0, double.infinity);
+      final width =
+          (note.duration * pixelsPerSecond).clamp(2.0, double.infinity);
       final y = (maxPitch - note.midiNote) * pitchSpacing - noteHeight / 2;
 
       final isActive = currentPosition >= note.startTime &&
@@ -324,11 +333,13 @@ class ScorePainter extends CustomPainter {
 
       final noteColor = isActive
           ? Color(0xFF00FF00)
-          : (note.midiNote % 12 == 1 || note.midiNote % 12 == 3 ||
-          note.midiNote % 12 == 6 || note.midiNote % 12 == 8 ||
-          note.midiNote % 12 == 10)
-          ? Color(0xFF444444)
-          : Color(0xFF2196F3);
+          : (note.midiNote % 12 == 1 ||
+                  note.midiNote % 12 == 3 ||
+                  note.midiNote % 12 == 6 ||
+                  note.midiNote % 12 == 8 ||
+                  note.midiNote % 12 == 10)
+              ? Color(0xFF444444)
+              : Color(0xFF2196F3);
 
       final notePaint = Paint()
         ..color = noteColor
