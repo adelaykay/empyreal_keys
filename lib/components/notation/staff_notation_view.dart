@@ -29,6 +29,13 @@ class StaffNotationView extends StatelessWidget {
         : scoreData.measures.length * scoreData.timeSignature.beatsPerMeasure;
     final totalWidth = 80 + (totalBeats * pixelsPerBeat) + 100; // margins
 
+    // Convert current position (seconds) to beats
+    final currentBeat = (currentPosition / 60.0) * scoreData.beatsPerMinute;
+    final scrollOffset = currentBeat * pixelsPerBeat;
+
+    // Fixed cursor position (like piano roll - 50px from left)
+    final cursorX = 50.0;
+
     return Container(
       margin: const EdgeInsets.all(8),
       decoration: BoxDecoration(
@@ -47,15 +54,20 @@ class StaffNotationView extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         child: SingleChildScrollView(
           scrollDirection: Axis.horizontal,
-          child: SizedBox(
-            width: totalWidth,
-            height: screenHeight * 0.35,
-            child: CustomPaint(
-              painter: StaffPainter(
-                scoreData: scoreData,
-                currentPosition: currentPosition,
-                pixelsPerBeat: pixelsPerBeat,
-                staffLineSpacing: 9.0,
+          physics: const NeverScrollableScrollPhysics(), // Disable manual scrolling
+          child: Transform.translate(
+            offset: Offset(-scrollOffset + cursorX, 0), // Auto-scroll to keep cursor fixed
+            child: Container(
+              width: totalWidth,
+              height: screenHeight * 0.35,
+              child: CustomPaint(
+                painter: StaffPainter(
+                  scoreData: scoreData,
+                  currentPosition: currentPosition,
+                  pixelsPerBeat: pixelsPerBeat,
+                  staffLineSpacing: 9.0,
+                  cursorX: cursorX, // Pass fixed cursor position
+                ),
               ),
             ),
           ),

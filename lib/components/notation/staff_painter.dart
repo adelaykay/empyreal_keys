@@ -1,9 +1,9 @@
 // components/notation/staff_painter.dart
 // Draws musical staff notation
 
+import 'package:empyrealkeys/services/quantizer.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
-import '../../models/music_theory.dart';
 import '../../models/score_data.dart';
 import 'note_renderer.dart';
 
@@ -12,13 +12,18 @@ class StaffPainter extends CustomPainter {
   final double currentPosition; // Current playback position in seconds
   final double pixelsPerBeat;
   final double staffLineSpacing; // Space between staff lines
+  final double cursorX;
+  late final NoteRenderer noteRenderer;
 
   StaffPainter({
     required this.scoreData,
     required this.currentPosition,
     this.pixelsPerBeat = 60.0,
     this.staffLineSpacing = 9.0,
-  });
+    this.cursorX = 50,
+  }) {
+    noteRenderer = NoteRenderer(staffLineSpacing: staffLineSpacing);
+  }
 
   // Convert beats to pixels
   double beatsToPixels(double beats) => beats * pixelsPerBeat;
@@ -34,7 +39,8 @@ class StaffPainter extends CustomPainter {
 
     // Calculate staff positioning
     final topStaffY = 40.0; // Leave room for top margin
-    final stavesSpacing = staffLineSpacing * 9; // Space between treble and bass staves
+    final stavesSpacing =
+        staffLineSpacing * 9; // Space between treble and bass staves
     final bassStaffY = topStaffY + stavesSpacing;
 
     // Draw each measure
@@ -87,13 +93,13 @@ class StaffPainter extends CustomPainter {
 
   /// Draw a 5-line staff
   void _drawStaff(
-      Canvas canvas, {
-        required double x,
-        required double y,
-        required double width,
-        required bool isFirstMeasure,
-        required Clef clef,
-      }) {
+    Canvas canvas, {
+    required double x,
+    required double y,
+    required double width,
+    required bool isFirstMeasure,
+    required Clef clef,
+  }) {
     final linePaint = Paint()
       ..color = Colors.black
       ..strokeWidth = 1.5
@@ -120,7 +126,8 @@ class StaffPainter extends CustomPainter {
   /// Draw clef symbol
   void _drawClef(Canvas canvas, Clef clef, double x, double y) {
     final textStyle = TextStyle(
-      fontFamily: 'Bravura', // Music font - we'll use emojis/Unicode as fallback
+      fontFamily:
+          'Bravura', // Music font - we'll use emojis/Unicode as fallback
       fontSize: staffLineSpacing * 5,
       color: Colors.black,
       fontWeight: FontWeight.normal,
@@ -139,9 +146,8 @@ class StaffPainter extends CustomPainter {
     textPainter.layout();
 
     // Position adjustments for each clef
-    final yOffset = clef == Clef.treble
-        ? -staffLineSpacing * 1.5
-        : staffLineSpacing * -1.5;
+    final yOffset =
+        clef == Clef.treble ? -staffLineSpacing * 1.5 : staffLineSpacing * -1.5;
 
     textPainter.paint(canvas, Offset(x, y + yOffset));
   }
@@ -160,7 +166,15 @@ class StaffPainter extends CustomPainter {
     if (sharps > 0) {
       // Draw sharps: F C G D A E B
       final sharpPositions = clef == Clef.treble
-          ? [0.0, 1.5, -0.5, 1.0, 2.5, 0.5, 2.0] // Staff line positions for treble
+          ? [
+              0.0,
+              1.5,
+              -0.5,
+              1.0,
+              2.5,
+              0.5,
+              2.0
+            ] // Staff line positions for treble
           : [1.0, 2.5, 0.5, 2.0, 3.5, 1.5, 3.0]; // For bass
 
       for (int i = 0; i < sharps; i++) {
@@ -172,7 +186,8 @@ class StaffPainter extends CustomPainter {
         textPainter.layout();
 
         final xPos = x + (i * staffLineSpacing * 1.2);
-        final yPos = y + (sharpPositions[i] * staffLineSpacing) + staffLineSpacing;
+        final yPos =
+            y + (sharpPositions[i] * staffLineSpacing) + staffLineSpacing;
         textPainter.paint(canvas, Offset(xPos, yPos));
       }
     } else {
@@ -190,7 +205,8 @@ class StaffPainter extends CustomPainter {
         textPainter.layout();
 
         final xPos = x + (i * staffLineSpacing * 1.2);
-        final yPos = y + (flatPositions[i] * staffLineSpacing) + staffLineSpacing;
+        final yPos =
+            y + (flatPositions[i] * staffLineSpacing) + staffLineSpacing;
         textPainter.paint(canvas, Offset(xPos, yPos));
       }
     }
@@ -203,7 +219,9 @@ class StaffPainter extends CustomPainter {
     // check number of sharps or flats
     final sharps = scoreData.keySignature.sharps;
     if (sharps > 0 || sharps < 0) {
-      x += (sharps > 0) ? (sharps * accidentalWidth) : (-sharps * accidentalWidth);
+      x += (sharps > 0)
+          ? (sharps * accidentalWidth)
+          : (-sharps * accidentalWidth);
     }
     final textStyle = TextStyle(
       fontSize: staffLineSpacing * 3,
@@ -236,21 +254,30 @@ class StaffPainter extends CustomPainter {
   }
 
   /// Draw measure bar line
-  void _drawMeasureBar(Canvas canvas, double x, double topY, double bottomY) {
+  void _drawMeasureBar(
+    Canvas canvas,
+    double x,
+    double topY,
+    double bottomY,
+  ) {
     final paint = Paint()
       ..color = Colors.black
       ..strokeWidth = 2.0
       ..style = PaintingStyle.stroke;
+    final accidentalWidth = staffLineSpacing * 0.7;
+    final numberOfAccidentals = scoreData.keySignature.sharps;
 
     canvas.drawLine(
-      Offset(x, topY),
-      Offset(x, bottomY + staffLineSpacing * 4),
+      Offset(x + numberOfAccidentals * accidentalWidth, topY),
+      Offset(x + numberOfAccidentals * accidentalWidth,
+          bottomY + staffLineSpacing * 4),
       paint,
     );
   }
 
   /// Draw playback cursor
-  void _drawPlaybackCursor(Canvas canvas, double x, double topY, double bottomY) {
+  void _drawPlaybackCursor(
+      Canvas canvas, double x, double topY, double bottomY) {
     final paint = Paint()
       ..color = Colors.red.withOpacity(0.6)
       ..strokeWidth = 3.0
@@ -266,25 +293,105 @@ class StaffPainter extends CustomPainter {
   /// Calculate width needed for a measure
   double _calculateMeasureWidth(Measure measure) {
     // Base width + space for each element
-    final elementCount = measure.trebleElements.length + measure.bassElements.length;
+    final elementCount =
+        measure.trebleElements.length + measure.bassElements.length;
     return (elementCount * pixelsPerBeat * 2).clamp(150.0, 400.0);
   }
 
   /// Draw notes and rests in a measure
   void _drawMeasureElements(
-      Canvas canvas, {
-        required Measure measure,
-        required double measureX,
-        required double trebleStaffY,
-        required double bassStaffY,
-        required double currentBeat,
-      }) {
-    // We'll implement note drawing in the next step
+    Canvas canvas, {
+    required Measure measure,
+    required double measureX,
+    required double trebleStaffY,
+    required double bassStaffY,
+    required double currentBeat,
+  }) {
+    final measureStartBeat =
+        measure.number * scoreData.timeSignature.beatsPerMeasure;
+    final measureEndBeat =
+        measureStartBeat + scoreData.timeSignature.beatsPerMeasure;
 
+    // Draw treble clef elements
+    _drawStaffElements(
+      canvas,
+      elements: measure.trebleElements,
+      measureX: measureX,
+      staffY: trebleStaffY,
+      clef: Clef.treble,
+      measureStartBeat: measureStartBeat,
+      measureEndBeat: measureEndBeat,
+      currentBeat: currentBeat,
+    );
+
+    // Draw bass clef elements
+    _drawStaffElements(
+      canvas,
+      elements: measure.bassElements,
+      measureX: measureX,
+      staffY: bassStaffY,
+      clef: Clef.bass,
+      measureStartBeat: measureStartBeat,
+      measureEndBeat: measureEndBeat,
+      currentBeat: currentBeat,
+    );
+  }
+
+  void _drawStaffElements(
+    Canvas canvas, {
+    required List<ScoreElement> elements,
+    required double measureX,
+    required double staffY,
+    required Clef clef,
+    required double measureStartBeat,
+    required double measureEndBeat,
+    required double currentBeat,
+  }) {
+    for (final element in elements) {
+      // Calculate X position based on beat position within measure
+      final beatInMeasure = element.startTime.beat;
+      final xOffset = beatsToPixels(beatInMeasure);
+      final x = measureX + xOffset;
+
+      // Check if this element is currently active
+      final elementStartBeat = element.startTime.absoluteBeat;
+      final elementEndBeat = elementStartBeat + element.duration.beats;
+      final isActive =
+          currentBeat >= elementStartBeat && currentBeat < elementEndBeat;
+
+      if (element is ScoreNote) {
+        if (element.isChord) {
+          noteRenderer.drawChord(
+            canvas,
+            pitches: element.pitches,
+            x: x,
+            staffY: staffY,
+            clef: clef,
+            duration: element.duration,
+            isActive: isActive,
+          );
+        } else {
+          noteRenderer.drawNote(
+            canvas,
+            pitch: element.pitches.first,
+            x: x,
+            staffY: staffY,
+            clef: clef,
+            duration: element.duration,
+            isActive: isActive,
+          );
+        }
+      } else if (element is ScoreRest) {
+        noteRenderer.drawRest(
+          canvas,
+          x: x,
+          staffY: staffY,
+          duration: element.duration,
+        );
+      }
+    }
   }
 
   @override
   bool shouldRepaint(StaffPainter oldDelegate) => true;
 }
-
-enum Clef { treble, bass }
