@@ -14,7 +14,7 @@ class MetronomeService with ChangeNotifier {
 
   MetronomeService(this.pianoState);
 
-  bool get isPlaying => _timer != null;
+  bool get isPlayingMetronome => _timer != null;
 
   Future<void> toggleMetronome() async {
     if (_isBusy) return;

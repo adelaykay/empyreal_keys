@@ -2,6 +2,7 @@
 
 import 'dart:math';
 
+import 'package:empyrealkeys/state/recorder_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../state/midi_provider.dart';
@@ -59,11 +60,20 @@ class _PianoKeyListenerState extends State<PianoKeyListener> {
         // Play a chord
         List<int> intervals = chordFormulas[chordType]!;
         for (int interval in intervals) {
-          midiProvider.playNote(midiNote: midiNote + interval, velocity: volume);
+          int note = midiNote + interval;
+          midiProvider.playNote(midiNote: note, velocity: volume);
+          final recorder = context.read<RecorderService>();
+          if (recorder.isRecording) {
+            recorder.recordNoteOn(midiNote, volume);
+          }
         }
       } else {
         // Play a single note
         midiProvider.playNote(midiNote: midiNote, velocity: volume);
+        final recorder = context.read<RecorderService>();
+        if (recorder.isRecording) {
+          recorder.recordNoteOn(midiNote, volume);
+        }
       }
     }
 
@@ -72,11 +82,20 @@ class _PianoKeyListenerState extends State<PianoKeyListener> {
         // Stop all notes in the chord
         List<int> intervals = chordFormulas[chordType]!;
         for (int interval in intervals) {
-          midiProvider.stopNote(midiNote: midiNote + interval);
+          int note = midiNote + interval;
+          midiProvider.stopNote(midiNote: note);
+          final recorder = context.read<RecorderService>();
+          if (recorder.isRecording) {
+            recorder.recordNoteOff(note);
+          }
         }
       } else {
         // Stop the single note
         midiProvider.stopNote(midiNote: midiNote);
+        final recorder = context.read<RecorderService>();
+        if (recorder.isRecording) {
+          recorder.recordNoteOff(midiNote);
+        }
       }
     }
 

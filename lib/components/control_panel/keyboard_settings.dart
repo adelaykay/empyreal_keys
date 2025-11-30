@@ -31,40 +31,10 @@ class _KeyboardSettingsState extends State<KeyboardSettings> {
     super.dispose();
   }
 
-  void _playHallelujahChorus(BuildContext ctx) {
-    final midi = Provider.of<MidiProvider>(ctx, listen: false);
-    final velocity = Provider.of<PianoState>(ctx, listen: false).volume;
-
-    // The correct “Hallelujah” motif:
-    final sequence = [72, 67, 69, 67];
-    const beatMs = 250; // one “beat” in ms
-    final durations = [3 * beatMs, beatMs, beatMs, beatMs];
-
-    int elapsed = 0;
-    for (var i = 0; i < sequence.length; i++) {
-      final note = sequence[i];
-      final dur = durations[i];
-
-      // schedule note-on at elapsed
-      Future.delayed(Duration(milliseconds: elapsed), () {
-        midi.playNote(midiNote: note, velocity: velocity);
-      });
-
-      // schedule note-off at elapsed + dur
-      Future.delayed(Duration(milliseconds: elapsed + dur), () {
-        midi.stopNote(midiNote: note);
-      });
-
-      elapsed += dur; // move to next
-    }
-
-    // optional congratulations
-    ScaffoldMessenger.of(ctx)
-        .showSnackBar(SnackBar(content: Text('🎉 Hallelujah unlocked!')));
-  }
 
   @override
   Widget build(BuildContext context) {
+    final midi = Provider.of<MidiProvider>(context);
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     final pianoState = Provider.of<PianoState>(context);
@@ -195,45 +165,23 @@ class _KeyboardSettingsState extends State<KeyboardSettings> {
                                           borderRadius:
                                               BorderRadius.circular(20),
                                         ),
-                                        title: GestureDetector(
-                                          onTap: () {
-                                            setState(() {
-                                              tapCount++;
-                                            });
-                                            if (tapCount >= 5) {
-                                              // Easter egg: show surprise
-                                              _playHallelujahChorus(context);
-                                              ScaffoldMessenger.of(ctx)
-                                                  .showSnackBar(
-                                                SnackBar(
-                                                  content: Text(
-                                                      '🎉 You found the secret chord! 🎹'),
-                                                  backgroundColor:
-                                                      Colors.orangeAccent,
-                                                  duration:
-                                                      Duration(seconds: 2),
-                                                ),
-                                              );
-                                            }
-                                          },
-                                          child: Row(
-                                            children: [
-                                              Icon(Icons.music_off,
-                                                  color: Colors.orangeAccent,
-                                                  size: 32),
-                                              SizedBox(width: 8),
-                                              Text(
-                                                tapCount >= 5
-                                                    ? 'Rock on! 🤘'
-                                                    : 'Oops!',
-                                                style: TextStyle(
-                                                  color: Colors.orangeAccent,
-                                                  fontSize: 24,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
+                                        title: Row(
+                                          children: [
+                                            Icon(Icons.music_off,
+                                                color: Colors.orangeAccent,
+                                                size: 32),
+                                            SizedBox(width: 8),
+                                            Text(
+                                              tapCount >= 5
+                                                  ? 'Rock on! 🤘'
+                                                  : 'Oops!',
+                                              style: TextStyle(
+                                                color: Colors.orangeAccent,
+                                                fontSize: 24,
+                                                fontWeight: FontWeight.bold,
                                               ),
-                                            ],
-                                          ),
+                                            ),
+                                          ],
                                         ),
                                         content: Column(
                                           mainAxisSize: MainAxisSize.min,
@@ -293,10 +241,10 @@ class _KeyboardSettingsState extends State<KeyboardSettings> {
                                         Text(name,
                                             style: TextStyle(
                                                 fontSize: screenHeight * 0.03)),
-                                        file != 'Default.SF2'
+                                        file != 'Default.SF2' && !midi.downloadedSoundfonts.contains(file)
                                             ? Icon(Icons.download_rounded,
                                                 color: Colors.orangeAccent)
-                                            : SizedBox(),
+                                            : Icon(Icons.check_circle, color: Theme.of(context).colorScheme.primary,),
                                       ],
                                     ),
                                   );
@@ -310,35 +258,38 @@ class _KeyboardSettingsState extends State<KeyboardSettings> {
                                             (i) => i.values.first == selected)
                                         .keys
                                         .first;
+                                final midi = Provider.of<MidiProvider>(context,
+                                    listen: false);
 
-                                Provider.of<MidiProvider>(context,
-                                        listen: false)
-                                    .isSoundfontLoaded = false;
+
+                                    midi.isSoundfontLoaded = false;
                                 setState(() {
                                   selectedInstrumentName = name;
                                 });
-
+                                midi.unloadMidi();
                                 pianoState.setInstrument(name);
                                 pianoState.setInstrument(selected);
-                                Provider.of<MidiProvider>(ctx, listen: false)
-                                    .loadMidi(selected);
+                                midi.loadMidi(selected);
                               }
                             },
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  selectedInstrumentName ??
-                                      'Select instrument…',
-                                  style: TextStyle(
-                                      fontSize: screenHeight * 0.03,
-                                      color: Colors.teal),
-                                ),
-                                SizedBox(width: 30),
-                                Icon(Icons.arrow_drop_down,
-                                    color: Colors.orangeAccent,
-                                    size: screenHeight * 0.04),
-                              ],
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    selectedInstrumentName ??
+                                        'Select instrument…',
+                                    style: TextStyle(
+                                        fontSize: screenHeight * 0.03,
+                                        color: Colors.teal),
+                                  ),
+                                  SizedBox(width: 30),
+                                  Icon(Icons.arrow_drop_down,
+                                      color: Colors.orangeAccent,
+                                      size: screenHeight * 0.04),
+                                ],
+                              ),
                             ),
                             // child: ListTile(
                             //   title: Text(
